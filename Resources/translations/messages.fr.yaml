@@ -1,0 +1,6 @@
+
+# Block translate
+block:
+    test:
+        title: "Test"
+        icon: "fa fa-align-justify"

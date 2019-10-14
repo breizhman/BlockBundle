@@ -1,0 +1,42 @@
+
+services:
+
+    block.entity.property:
+        class: 'BlockBundle\Service\Entity\BlockEntityProperty'
+        public: true
+        arguments:
+            - "@block.data_transformers"
+
+    block.entity_manager:
+        class: 'BlockBundle\Service\Entity\BlockEntityManager'
+        public: true
+        arguments:
+            - "@block.entity.transformer"
+            - "@block.entity.property"
+            - "@block.serializer"
+            - "@block.annotations.finder"
+            - "@block.entity_manager.indexation"
+
+    block.entity.transformer:
+        class: 'BlockBundle\Service\Entity\BlockEntityTransformer'
+        public: true
+        arguments:
+            - "@block.entity.property"
+            - "@block.data_transformers.finder"
+
+    block.event_listener:
+        class: 'BlockBundle\EventListener\BlockListener'
+        arguments:
+            - "@block.factory"
+            - "@block.entity_manager"
+        tags:
+            - { name: doctrine.event_listener, event: onFlush, lazy: true }
+            - { name: doctrine.event_listener, event: postFlush, lazy: true }
+            - { name: doctrine.event_listener, event: postLoad, lazy: true }
+
+    block.entity_manager.indexation:
+        class: 'BlockBundle\Service\Entity\BlockIndexationManager'
+        public: true
+        arguments:
+            - "@block.serializer"
+            - "@doctrine.orm.entity_manager"

@@ -1,0 +1,49 @@
+
+services:
+
+    block.data_transformers:
+        class: 'BlockBundle\Service\BlockDataTransformers'
+        public: true
+
+    block.data_transformers.finder:
+        class: 'BlockBundle\Service\Finder\DataTransformersFinder'
+        public: true
+        arguments:
+            - "@block.annotations.finder"
+            - "@block.data_transformers"
+
+    block.data_transformer.entity:
+        class: 'BlockBundle\DataTransformer\EntityTransformer'
+        public: true
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@block.annotations.finder"
+        tags:
+            - { name: block.data_transformer, alias: 'entity' }
+
+    block.data_transformer.type:
+        class: 'BlockBundle\DataTransformer\TypeTransformer'
+        public: true
+        arguments:
+            - "@block.factory"
+        tags:
+            - { name: block.data_transformer, alias: 'type' }
+
+    block.data_transformer.collection:
+        class: 'BlockBundle\DataTransformer\CollectionTransformer'
+        public: true
+        arguments:
+            - "@block.factory"
+            - "@block.data_transformer.type"
+            - "@block.annotations.finder"
+        tags:
+            - { name: block.data_transformer, alias: 'collection' }
+
+    block.data_transformer.assoc_entity_to_type:
+        class: 'BlockBundle\DataTransformer\AssocEntityToTypeTransformer'
+        public: true
+        arguments:
+            - "@block.factory"
+        tags:
+            - { name: block.data_transformer, alias: 'assoc_entity_to_type' }
+

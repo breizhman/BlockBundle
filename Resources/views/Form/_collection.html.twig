@@ -1,0 +1,96 @@
+
+{%- block block_collection_widget -%}
+
+    <div class="js-block-collection" {{ block('widget_container_attributes') }}>
+
+        {# add order hidden input #}
+        {% if form.children.block_order is defined %}
+            {{ form_widget(form.children.block_order, {'attr' : {'class' : 'js-block-collection-order'}}) }}
+        {% endif %}
+
+        <div class="x_panel loading js-block-collection-loader"></div>
+
+        <div class="js-block-collection-wrapper hide">
+            <div class="block-collection-list js-block-collection-list">
+                {% set prototypes = [] %}
+                {% for name, child in form.children %}
+
+                    {% if name != 'block_order' %}
+                        {% if is_granted(constant('BlockBundle\\Service\\BlockVoterAttributes::EDIT'), child.vars.name) %}
+
+                            {% if is_granted(constant('BlockBundle\\Service\\BlockVoterAttributes::CREATE'), child.vars.name) %}
+                                {% if  child.vars.name is defined and child.vars.prototype is defined %}
+                                    {%- set prototypes = prototypes|merge({
+                                        (child.vars.name) : (form_widget(child.vars.prototype, {'callback' : 'block_collection_widget__child' }))
+                                    }) -%}
+                                {% endif %}
+                            {% endif %}
+
+                            {% for sub_child in child %}
+                                {{ form_widget(sub_child, {'callback' : 'block_collection_widget__child' }) }}
+                            {% endfor %}
+                        {% endif %}
+
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            {% if prototypes|length > 0 %}
+                <div class="block-collection-add x_panel" >
+                    <a class="btn btn-link btn-lg">
+                        <i class="glyphicon glyphicon-plus-sign"></i>
+                    </a>
+                    {% for name, prototype in prototypes %}
+                        <a class="btn btn-default btn-lg js-block-collection-action-create" data-block-name="{{ name }}">
+                            <span class="{{ ('block.' ~ name ~ '.icon')|trans }}" aria-hidden="true"></span><br>
+                            {{ ('block.' ~ name ~ '.title')|trans }}
+                        </a>
+                        <script class="js-block-collection-template" type="text/template" data-block-name="{{ name }}" data-prefix-name="{{ full_name ~ '[' ~ name ~ ']' }}">
+                            {{ prototype }}
+                        </script>
+                    {% endfor %}
+                    <div class="x_lock"></div>
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+{%- endblock block_collection_widget -%}
+
+{%- block block_collection_widget__child -%}
+
+    <div class="
+                    x_panel
+                    block-form
+                    block-form-{{ block_name }}
+                    js-block-form
+                    js-block-form-{{ block_name }}
+                    {% if is_granted(constant('BlockBundle\\Service\\BlockVoterAttributes::SORTABLE'), block_name) %}js-block-sortable-item{% endif %}
+                "
+            {{ block('widget_container_attributes') }}
+    >
+        <div class="x_title">
+
+            <ul class="nav navbar-right panel_toolbox">
+                <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                </li>
+                {% if is_granted(constant('BlockBundle\\Service\\BlockVoterAttributes::DELETE'), block_name) %}
+                    <li><a class="close-link js-block-collection-action-remove"><i class="fa fa-close"></i></a>
+                    </li>
+                {% endif %}
+            </ul>
+
+            <h4>{{ ('block.' ~ block_name ~ '.title')|trans }}</h4>
+        </div>
+        <div class="x_content">
+            {% if block('block_' ~ block_name ~ '__collection') is defined %}
+                {{ block('block_' ~ block_name ~ '__collection') }}
+            {% else %}
+                {{ block('block_widget_default') }}
+            {% endif %}
+        </div>
+        <div class="x_lock"></div>
+    </div>
+
+{%- endblock -%}

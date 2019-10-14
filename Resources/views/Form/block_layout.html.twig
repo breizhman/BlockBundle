@@ -1,0 +1,28 @@
+
+{# default template for all block #}
+{%- block block_widget -%}
+    {% if block_name is defined %}
+        {% if callback  is not defined or block(callback) is not defined %}
+            {% set callback  = 'block_' ~ block_name ~ '__default' %}
+        {% endif %}
+    {% endif %}
+
+    {% if callback is defined and block(callback) is defined %}
+        {{ block(callback) }}
+    {% else %}
+        {{ block('form_widget') }}
+    {% endif %}
+{%- endblock -%}
+
+{# default template for all block #}
+{%- block block_widget_default -%}
+    {% set callback = '' %}
+    {% if block_name is defined %}
+        {%  set callback = 'block_' ~ block_name ~ '__default' %}
+    {% endif %}
+
+    {{ block('block_widget') }}
+{%- endblock -%}
+
+{% use "@Block/Form/_collection.html.twig" %}
+
