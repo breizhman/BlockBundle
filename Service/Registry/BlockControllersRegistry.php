@@ -6,7 +6,7 @@ use Cms\BlockBundle\Model\Controller\BlockControllerInterface;
 
 /**
  * Class BlockControllersRegistry
- * @package BlockBundle\Service\Registry
+ * @package Cms\BlockBundle\Service\Registry
  */
 class BlockControllersRegistry extends AbstractBlockRegistry
 {

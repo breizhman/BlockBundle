@@ -11,7 +11,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * Class BlockEntityManager
- * @package BlockBundle\Service\Entity
+ * @package Cms\BlockBundle\Service\Entity
  */
 class BlockEntityManager implements BlockEntityManagerInterface
 {

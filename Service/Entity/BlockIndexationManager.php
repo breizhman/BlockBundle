@@ -13,7 +13,7 @@ use Symfony\Component\Serializer\SerializerInterface;
  *
  * manage block_indexation table
  *
- * @package BlockBundle\Service\Entity
+ * @package Cms\BlockBundle\Service\Entity
  */
 class BlockIndexationManager implements BlockIndexationManagerInterface
 {

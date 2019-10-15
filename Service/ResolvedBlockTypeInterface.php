@@ -6,7 +6,7 @@ use Cms\BlockBundle\Model\Type\BlockTypeInterface;
 
 /**
  * Interface ResolvedBlockTypeInterface
- * @package BlockBundle\Service
+ * @package Cms\BlockBundle\Service
  */
 interface ResolvedBlockTypeInterface
 {

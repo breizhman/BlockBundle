@@ -2,13 +2,13 @@
 services:
 
     block.registries:
-        class: 'BlockBundle\Service\BlockRegistries'
+        class: 'Cms\BlockBundle\Service\BlockRegistries'
         public: true
 
     # REGISTRY
 
     block.registry.types:
-        class: 'BlockBundle\Service\Registry\BlockTypesRegistry'
+        class: 'Cms\BlockBundle\Service\Registry\BlockTypesRegistry'
         public: true
         arguments:
             - "@block.dependency_injection.types"
@@ -17,7 +17,7 @@ services:
             - { name: block.registry, alias: 'type' }
 
     block.registry.controllers:
-        class: 'BlockBundle\Service\Registry\BlockControllersRegistry'
+        class: 'Cms\BlockBundle\Service\Registry\BlockControllersRegistry'
         public: true
         arguments:
             - "@block.dependency_injection.controllers"

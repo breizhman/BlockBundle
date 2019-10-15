@@ -4,7 +4,7 @@ namespace Cms\BlockBundle\Form;
 
 /**
  * Class BlockCollectionType
- * @package BlockBundle\Form
+ * @package Cms\BlockBundle\Form
  */
 class BlockCollectionType extends AbstractBlockCollectionType
 {

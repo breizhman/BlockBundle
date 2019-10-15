@@ -2,13 +2,13 @@
 services:
 
     block.entity.property:
-        class: 'BlockBundle\Service\Entity\BlockEntityProperty'
+        class: 'Cms\BlockBundle\Service\Entity\BlockEntityProperty'
         public: true
         arguments:
             - "@block.data_transformers"
 
     block.entity_manager:
-        class: 'BlockBundle\Service\Entity\BlockEntityManager'
+        class: 'Cms\BlockBundle\Service\Entity\BlockEntityManager'
         public: true
         arguments:
             - "@block.entity.transformer"
@@ -18,14 +18,14 @@ services:
             - "@block.entity_manager.indexation"
 
     block.entity.transformer:
-        class: 'BlockBundle\Service\Entity\BlockEntityTransformer'
+        class: 'Cms\BlockBundle\Service\Entity\BlockEntityTransformer'
         public: true
         arguments:
             - "@block.entity.property"
             - "@block.data_transformers.finder"
 
     block.event_listener:
-        class: 'BlockBundle\EventListener\BlockListener'
+        class: 'Cms\BlockBundle\EventListener\BlockListener'
         arguments:
             - "@block.factory"
             - "@block.entity_manager"
@@ -35,7 +35,7 @@ services:
             - { name: doctrine.event_listener, event: postLoad, lazy: true }
 
     block.entity_manager.indexation:
-        class: 'BlockBundle\Service\Entity\BlockIndexationManager'
+        class: 'Cms\BlockBundle\Service\Entity\BlockIndexationManager'
         public: true
         arguments:
             - "@block.serializer"

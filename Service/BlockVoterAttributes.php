@@ -4,7 +4,7 @@ namespace Cms\BlockBundle\Service;
 
 /**
  * Class BlockVoterAttributes
- * @package BlockBundle\Service
+ * @package Cms\BlockBundle\Service
  */
 class BlockVoterAttributes
 {

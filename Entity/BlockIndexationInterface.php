@@ -4,7 +4,7 @@ namespace Cms\BlockBundle\Entity;
 
 /**
  * Interface BlockIndexationInterface
- * @package BlockBundle\Entity
+ * @package Cms\BlockBundle\Entity
  */
 interface BlockIndexationInterface
 {

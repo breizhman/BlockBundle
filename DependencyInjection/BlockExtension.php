@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 /**
  * Class BlockExtension
- * @package BlockBundle\DependencyInjection
+ * @package Cms\BlockBundle\DependencyInjection
  */
 class BlockExtension extends Extension
 {

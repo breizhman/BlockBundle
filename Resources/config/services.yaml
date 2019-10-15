@@ -6,10 +6,10 @@ imports:
 
 services:
 
-    BlockBundle\Service\BlockFactory: '@block.factory'
+    Cms\BlockBundle\Service\BlockFactory: '@block.factory'
 
     block.twig.extension:
-        class: 'BlockBundle\Twig\BlockExtension'
+        class: 'Cms\BlockBundle\Twig\BlockExtension'
         public: true
         arguments:
             - "@block.renderer"
@@ -25,18 +25,18 @@ services:
             - ["@block.serializer.encoder.array"]
 
     block.serializer.normalizer:
-        class: 'BlockBundle\Serializer\Normalizer\BlockNormalizer'
+        class: 'Cms\BlockBundle\Serializer\Normalizer\BlockNormalizer'
         public: true
         arguments:
             - "@serializer.normalizer.object"
             - "@block.entity.transformer"
 
     block.serializer.encoder.array:
-        class: 'BlockBundle\Serializer\Encoder\ArrayEncoder'
+        class: 'Cms\BlockBundle\Serializer\Encoder\ArrayEncoder'
         public: true
 
     block.factory:
-        class: 'BlockBundle\Service\BlockFactory'
+        class: 'Cms\BlockBundle\Service\BlockFactory'
         public: true
         arguments:
             - "@block.registries"
@@ -44,11 +44,11 @@ services:
             - "@form.factory"
 
     block.resolved_type.factory:
-        class: 'BlockBundle\Service\ResolvedBlockTypeFactory'
+        class: 'Cms\BlockBundle\Service\ResolvedBlockTypeFactory'
         public: true
 
     block.forms.abstract:
-        class: 'BlockBundle\Service\AbstractBlockForms'
+        class: 'Cms\BlockBundle\Service\AbstractBlockForms'
         abstract:  true
         public: true
         arguments:
@@ -56,11 +56,11 @@ services:
             - "@block.annotations.finder"
 
     block.forms:
-        class: 'BlockBundle\Service\BlockForms'
+        class: 'Cms\BlockBundle\Service\BlockForms'
         parent: 'block.forms.abstract'
 
     block.form_type.abstract_collection:
-        class: 'BlockBundle\Form\AbstractBlockCollectionType'
+        class: 'Cms\BlockBundle\Form\AbstractBlockCollectionType'
         abstract:  true
         public: true
         arguments:
@@ -68,16 +68,16 @@ services:
             - "@service_container"
 
     block.form_type.collection:
-        class: 'BlockBundle\Form\BlockCollectionType'
+        class: 'Cms\BlockBundle\Form\BlockCollectionType'
         parent: 'block.form_type.abstract_collection'
         tags: [form.type]
 
     block.form_type.parent:
-        class: 'BlockBundle\Form\BlockParentType'
+        class: 'Cms\BlockBundle\Form\BlockParentType'
         tags: [form.type]
 
     block.renderer:
-        class: 'BlockBundle\Service\BlockRenderer'
+        class: 'Cms\BlockBundle\Service\BlockRenderer'
         public: true
         arguments:
             - "@request_stack"
@@ -86,5 +86,5 @@ services:
             - "%block.themes%"
 
     block.annotations.finder:
-        class: 'BlockBundle\Service\Finder\AnnotationsFinder'
+        class: 'Cms\BlockBundle\Service\Finder\AnnotationsFinder'
         public: true

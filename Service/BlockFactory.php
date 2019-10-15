@@ -11,7 +11,7 @@ use Symfony\Component\Form\FormInterface;
 
 /**
  * Class BlockFactory
- * @package BlockBundle\Service
+ * @package Cms\BlockBundle\Service
  */
 class BlockFactory implements BlockFactoryInterface
 {

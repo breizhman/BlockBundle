@@ -7,7 +7,7 @@ use Cms\BlockBundle\Model\Entity\BlockEntityInterface;
 
 /**
  * Interface BlockIndexationManagerInterface
- * @package BlockBundle\Service\Entity
+ * @package Cms\BlockBundle\Service\Entity
  */
 interface  BlockIndexationManagerInterface
 {

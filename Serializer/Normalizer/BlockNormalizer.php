@@ -12,7 +12,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * Class BlockNormalizer
- * @package BlockBundle\Serializer\Normalizer
+ * @package Cms\BlockBundle\Serializer\Normalizer
  */
 class BlockNormalizer implements NormalizerInterface, DenormalizerInterface, SerializerAwareInterface
 {

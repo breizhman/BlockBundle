@@ -13,7 +13,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * Class BlockPass
- * @package BlockBundle\DependencyInjection
+ * @package Cms\BlockBundle\DependencyInjection
  */
 class BlockPass implements CompilerPassInterface
 {
@@ -49,7 +49,7 @@ class BlockPass implements CompilerPassInterface
      * @param string $dependencyInjectionTag
      * @param string $serviceTag
      *
-     * @throws\Cms\BlockBundle\Exception\ClassNotFoundException
+     * @throws \Cms\BlockBundle\Exception\ClassNotFoundException
      * @throws \Exception
      * @throws \ReflectionException
      */
@@ -82,7 +82,7 @@ class BlockPass implements CompilerPassInterface
     /**
      * @param string $serviceTag
      *
-     * @throws\Cms\BlockBundle\Exception\ClassNotFoundException
+     * @throws \Cms\BlockBundle\Exception\ClassNotFoundException
      * @throws \Exception
      * @throws \ReflectionException
      */

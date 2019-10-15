@@ -6,7 +6,7 @@ use Symfony\Component\Form\AbstractType;
 
 /**
  * Class BlockCollectionType
- * @package BlockBundle\Form
+ * @package Cms\BlockBundle\Form
  */
 class BlockParentType extends AbstractType
 {

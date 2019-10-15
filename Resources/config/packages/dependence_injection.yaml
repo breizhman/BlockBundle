@@ -2,14 +2,14 @@
 services:
 
     block.dependency_injection.types:
-        class: 'BlockBundle\Service\Registry\DependencyInjection\DependencyInjectionBlockTypes'
+        class: 'Cms\BlockBundle\Service\Registry\DependencyInjection\DependencyInjectionBlockTypes'
         public: true
         arguments:
             - ""
             - ""
 
     block.dependency_injection.controllers:
-        class: 'BlockBundle\Service\Registry\DependencyInjection\DependencyInjectionBlockControllers'
+        class: 'Cms\BlockBundle\Service\Registry\DependencyInjection\DependencyInjectionBlockControllers'
         public: true
         arguments:
             - ""

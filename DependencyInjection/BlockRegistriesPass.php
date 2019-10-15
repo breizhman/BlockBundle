@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * Class BlockRegistriesPass
- * @package BlockBundle\DependencyInjection
+ * @package Cms\BlockBundle\DependencyInjection
  */
 class BlockRegistriesPass implements CompilerPassInterface
 {

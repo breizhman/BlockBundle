@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class BlockController
- * @package BlockBundle\Controller
+ * @package Cms\BlockBundle\Controller
  */
 class BlockController extends Controller
 {
@@ -25,9 +25,9 @@ class BlockController extends Controller
      * @return Response
      *
      * @throws \Exception
-     * @throws\Cms\BlockBundle\Exception\TemplateNotFoundException
-     * @throws\Cms\BlockBundle\Exception\ThemeNotExistException
-     * @throws\Cms\BlockBundle\Exception\ThemeNotFoundException
+     * @throws \Cms\BlockBundle\Exception\TemplateNotFoundException
+     * @throws \Cms\BlockBundle\Exception\ThemeNotExistException
+     * @throws \Cms\BlockBundle\Exception\ThemeNotFoundException
      */
     public function renderAction(Request $request, string $name, string $id): Response
     {
@@ -58,7 +58,7 @@ class BlockController extends Controller
      * @param string $action
      *
      * @return Response
-     * @throws\Cms\BlockBundle\Exception\ClassNotFoundException
+     * @throws \Cms\BlockBundle\Exception\ClassNotFoundException
      */
     public function customAction(string $name, string $id, string $action): Response
     {

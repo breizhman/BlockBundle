@@ -12,7 +12,7 @@ use Symfony\Component\Templating\EngineInterface;
 
 /**
  * Class BlockRenderer
- * @package BlockBundle\Service
+ * @package Cms\BlockBundle\Service
  */
 class BlockRenderer implements BlockRendererInterface
 {
@@ -58,7 +58,7 @@ class BlockRenderer implements BlockRendererInterface
      * @throws TemplateNotFoundException
      * @throws ThemeNotExistException
      * @throws ThemeNotFoundException
-     * @throws\Cms\BlockBundle\Exception\ClassNotFoundException
+     * @throws \Cms\BlockBundle\Exception\ClassNotFoundException
      */
     public function renderBlock(BlockEntityInterface $blockEntity, $parameters = [], string $themeName = null) :? string
     {

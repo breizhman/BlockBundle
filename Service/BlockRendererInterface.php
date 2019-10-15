@@ -6,7 +6,7 @@ use Cms\BlockBundle\Model\Entity\BlockEntityInterface;
 
 /**
  * Interface BlockRendererInterface
- * @package BlockBundle\Service
+ * @package Cms\BlockBundle\Service
  */
 interface BlockRendererInterface
 {

@@ -15,7 +15,7 @@ use Cms\BlockBundle\Annotation as BlockAnnotation;
 
 /**
  * Class BlockListener
- * @package BlockBundle\EventListener
+ * @package Cms\BlockBundle\EventListener
  */
 class BlockListener extends Event
 {

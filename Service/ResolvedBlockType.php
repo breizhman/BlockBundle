@@ -8,7 +8,7 @@ use Doctrine\Common\Inflector\Inflector;
 
 /**
  * Class ResolvedBlockType
- * @package BlockBundle\Service
+ * @package Cms\BlockBundle\Service
  */
 class ResolvedBlockType implements BlockTypeInterface, ResolvedBlockTypeInterface
 {

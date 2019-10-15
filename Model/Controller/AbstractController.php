@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class AbstractController
- * @package BlockBundle\Model\Controller
+ * @package Cms\BlockBundle\Model\Controller
  */
 abstract class AbstractController implements BlockControllerInterface
 {

@@ -6,7 +6,7 @@ use Cms\BlockBundle\Model\Type\BlockTypeInterface;
 
 /**
  * Class ResolvedBlockTypeFactory
- * @package BlockBundle\Service
+ * @package Cms\BlockBundle\Service
  */
 class ResolvedBlockTypeFactory implements ResolvedBlockTypeFactoryInterface
 {

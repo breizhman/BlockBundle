@@ -17,7 +17,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Class AbstractBlockCollectionType
- * @package BlockBundle\Form
+ * @package Cms\BlockBundle\Form
  */
 abstract class AbstractBlockCollectionType extends AbstractType implements DataTransformerInterface
 {

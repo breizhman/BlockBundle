@@ -7,7 +7,7 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 /**
  * Class BlockEntityProperty
- * @package BlockBundle\Service\Entity
+ * @package Cms\BlockBundle\Service\Entity
  */
 class BlockEntityProperty implements BlockEntityPropertyInterface
 {

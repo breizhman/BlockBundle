@@ -9,7 +9,7 @@ use Cms\BlockBundle\Service\ResolvedBlockTypeInterface;
 
 /**
  * Class BlockTypesRegistry
- * @package BlockBundle\Service\Registry
+ * @package Cms\BlockBundle\Service\Registry
  */
 class BlockTypesRegistry extends AbstractBlockRegistry
 {

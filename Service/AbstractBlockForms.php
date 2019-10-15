@@ -10,7 +10,7 @@ use Cms\BlockBundle\Service\Registry\BlockRegistryInterface;
 
 /**
  * Class AbstractBlockForms
- * @package BlockBundle\Service
+ * @package Cms\BlockBundle\Service
  */
 abstract class AbstractBlockForms implements BlockFormsInterface
 {

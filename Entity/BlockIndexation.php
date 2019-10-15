@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * group all blocks data to one table
  *
  * @ORM\Table(name="block_indexation")
- * @ORM\Entity(repositoryClass="BlockBundle\Entity\BlockIndexationRepository")
+ * @ORM\Entity(repositoryClass="Cms\BlockBundle\Entity\BlockIndexationRepository")
  */
 class BlockIndexation implements BlockIndexationInterface
 {

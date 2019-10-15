@@ -12,7 +12,7 @@ use Doctrine\Common\Collections\Selectable;
 
 /**
  * Class BlockCollection
- * @package BlockBundle\Collection
+ * @package Cms\BlockBundle\Collection
  */
 class BlockCollection implements Collection, Selectable
 {
