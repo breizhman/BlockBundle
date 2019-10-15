@@ -1,6 +1,6 @@
 <?php
 
-namespace BlockBundle\Model\Entity;
+namespace Cms\BlockBundle\Model\Entity;
 
 abstract class AbstractEntity implements BlockEntityInterface
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace BlockBundle\Service;
+namespace Cms\BlockBundle\Service;
 
-use BlockBundle\Service\Registry\BlockRegistryInterface;
+use Cms\BlockBundle\Service\Registry\BlockRegistryInterface;
 
 interface BlockRegistriesInterface
 {

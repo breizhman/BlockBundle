@@ -1,6 +1,6 @@
 <?php
 
-namespace BlockBundle\Serializer\Encoder;
+namespace Cms\BlockBundle\Serializer\Encoder;
 
 
 use Symfony\Component\Serializer\Encoder\DecoderInterface;

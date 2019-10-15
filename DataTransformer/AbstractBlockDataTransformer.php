@@ -1,8 +1,8 @@
 <?php
 
-namespace BlockBundle\DataTransformer;
+namespace Cms\BlockBundle\DataTransformer;
 
-use BlockBundle\Annotation\BlockAnnotationInterface;
+use Cms\BlockBundle\Annotation\BlockAnnotationInterface;
 
 abstract class AbstractBlockDataTransformer implements BlockDataTransformerInterface
 {

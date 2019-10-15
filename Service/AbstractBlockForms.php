@@ -1,12 +1,12 @@
 <?php
 
-namespace BlockBundle\Service;
+namespace Cms\BlockBundle\Service;
 
-use BlockBundle\Annotation\Collection;
-use BlockBundle\Annotation\Type;
-use BlockBundle\Model\Type\BlockTypeInterface;
-use BlockBundle\Service\Finder\AnnotationsFinderInterface;
-use BlockBundle\Service\Registry\BlockRegistryInterface;
+use Cms\BlockBundle\Annotation\Collection;
+use Cms\BlockBundle\Annotation\Type;
+use Cms\BlockBundle\Model\Type\BlockTypeInterface;
+use Cms\BlockBundle\Service\Finder\AnnotationsFinderInterface;
+use Cms\BlockBundle\Service\Registry\BlockRegistryInterface;
 
 /**
  * Class AbstractBlockForms

@@ -1,6 +1,6 @@
 <?php
 
-namespace BlockBundle\Exception;
+namespace Cms\BlockBundle\Exception;
 
 /**
  * Base InvalidArgumentException for the Form component.

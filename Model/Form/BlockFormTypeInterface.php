@@ -1,8 +1,8 @@
 <?php
 
-namespace BlockBundle\Model\Form;
+namespace Cms\BlockBundle\Model\Form;
 
-use BlockBundle\Model\Type\BlockTypeInterface;
+use Cms\BlockBundle\Model\Type\BlockTypeInterface;
 
 interface BlockFormTypeInterface
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace BlockBundle\Entity;
+namespace Cms\BlockBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
 

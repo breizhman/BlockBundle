@@ -1,6 +1,6 @@
 <?php
 
-namespace BlockBundle\Form;
+namespace Cms\BlockBundle\Form;
 
 /**
  * Class BlockCollectionType

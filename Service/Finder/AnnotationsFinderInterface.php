@@ -1,6 +1,6 @@
 <?php
 
-namespace BlockBundle\Service\Finder;
+namespace Cms\BlockBundle\Service\Finder;
 
 interface AnnotationsFinderInterface
 {

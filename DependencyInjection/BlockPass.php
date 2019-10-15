@@ -1,10 +1,10 @@
 <?php
 
-namespace BlockBundle\DependencyInjection;
+namespace Cms\BlockBundle\DependencyInjection;
 
 
-use BlockBundle\Model\Type\BlockTypeInterface;
-use BlockBundle\Service\ResolvedBlockType;
+use Cms\BlockBundle\Model\Type\BlockTypeInterface;
+use Cms\BlockBundle\Service\ResolvedBlockType;
 use Symfony\Component\DependencyInjection\Compiler\PriorityTaggedServiceTrait;
 use Symfony\Component\DependencyInjection\Compiler\ServiceLocatorTagPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -49,7 +49,7 @@ class BlockPass implements CompilerPassInterface
      * @param string $dependencyInjectionTag
      * @param string $serviceTag
      *
-     * @throws \BlockBundle\Exception\ClassNotFoundException
+     * @throws\Cms\BlockBundle\Exception\ClassNotFoundException
      * @throws \Exception
      * @throws \ReflectionException
      */
@@ -82,7 +82,7 @@ class BlockPass implements CompilerPassInterface
     /**
      * @param string $serviceTag
      *
-     * @throws \BlockBundle\Exception\ClassNotFoundException
+     * @throws\Cms\BlockBundle\Exception\ClassNotFoundException
      * @throws \Exception
      * @throws \ReflectionException
      */

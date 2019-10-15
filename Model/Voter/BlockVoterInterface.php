@@ -1,8 +1,8 @@
 <?php
 
-namespace BlockBundle\Model\Voter;
+namespace Cms\BlockBundle\Model\Voter;
 
-use BlockBundle\Model\Type\BlockTypeInterface;
+use Cms\BlockBundle\Model\Type\BlockTypeInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
 interface BlockVoterInterface extends VoterInterface

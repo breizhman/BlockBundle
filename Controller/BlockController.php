@@ -1,11 +1,11 @@
 <?php
 
-namespace BlockBundle\Controller;
+namespace Cms\BlockBundle\Controller;
 
-use BlockBundle\Entity\BlockIndexation;
-use BlockBundle\Model\Controller\BlockControllerInterface;
-use BlockBundle\Model\Entity\BlockEntityInterface;
-use BlockBundle\Service\ConvertCase;
+use Cms\BlockBundle\Entity\BlockIndexation;
+use Cms\BlockBundle\Model\Controller\BlockControllerInterface;
+use Cms\BlockBundle\Model\Entity\BlockEntityInterface;
+use Cms\BlockBundle\Service\ConvertCase;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,9 +25,9 @@ class BlockController extends Controller
      * @return Response
      *
      * @throws \Exception
-     * @throws \BlockBundle\Exception\TemplateNotFoundException
-     * @throws \BlockBundle\Exception\ThemeNotExistException
-     * @throws \BlockBundle\Exception\ThemeNotFoundException
+     * @throws\Cms\BlockBundle\Exception\TemplateNotFoundException
+     * @throws\Cms\BlockBundle\Exception\ThemeNotExistException
+     * @throws\Cms\BlockBundle\Exception\ThemeNotFoundException
      */
     public function renderAction(Request $request, string $name, string $id): Response
     {
@@ -58,7 +58,7 @@ class BlockController extends Controller
      * @param string $action
      *
      * @return Response
-     * @throws \BlockBundle\Exception\ClassNotFoundException
+     * @throws\Cms\BlockBundle\Exception\ClassNotFoundException
      */
     public function customAction(string $name, string $id, string $action): Response
     {

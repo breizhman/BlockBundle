@@ -1,8 +1,8 @@
 <?php
 
-namespace BlockBundle\Service\Finder;
+namespace Cms\BlockBundle\Service\Finder;
 
-use BlockBundle\Service\BlockDataTransformersInterface;
+use Cms\BlockBundle\Service\BlockDataTransformersInterface;
 use Doctrine\Common\Annotations\Annotation\Target;
 
 class DataTransformersFinder implements DataTransformersFinderInterface

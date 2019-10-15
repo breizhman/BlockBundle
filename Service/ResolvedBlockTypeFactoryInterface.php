@@ -1,8 +1,8 @@
 <?php
 
-namespace BlockBundle\Service;
+namespace Cms\BlockBundle\Service;
 
-use BlockBundle\Model\Type\BlockTypeInterface;
+use Cms\BlockBundle\Model\Type\BlockTypeInterface;
 
 interface ResolvedBlockTypeFactoryInterface
 {

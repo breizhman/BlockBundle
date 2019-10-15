@@ -1,9 +1,9 @@
 <?php
 
-namespace BlockBundle\Service;
+namespace Cms\BlockBundle\Service;
 
-use BlockBundle\Annotation\BlockAnnotationInterface;
-use BlockBundle\DataTransformer\BlockDataTransformerInterface;
+use Cms\BlockBundle\Annotation\BlockAnnotationInterface;
+use Cms\BlockBundle\DataTransformer\BlockDataTransformerInterface;
 
 interface BlockDataTransformersInterface
 {

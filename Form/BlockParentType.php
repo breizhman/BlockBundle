@@ -1,6 +1,6 @@
 <?php
 
-namespace BlockBundle\Form;
+namespace Cms\BlockBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 

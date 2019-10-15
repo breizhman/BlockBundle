@@ -1,6 +1,6 @@
 <?php
 
-namespace BlockBundle\Exception;
+namespace Cms\BlockBundle\Exception;
 
 class ThemeNotFoundException extends \Exception implements ExceptionInterface
 {

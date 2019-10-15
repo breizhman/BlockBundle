@@ -1,10 +1,10 @@
 <?php
 
-namespace BlockBundle\Model\Voter;
+namespace Cms\BlockBundle\Model\Voter;
 
-use BlockBundle\Model\Type\BlockTypeInterface;
-use BlockBundle\Service\BlockFactoryInterface;
-use BlockBundle\Service\BlockVoterAttributes;
+use Cms\BlockBundle\Model\Type\BlockTypeInterface;
+use Cms\BlockBundle\Service\BlockFactoryInterface;
+use Cms\BlockBundle\Service\BlockVoterAttributes;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 

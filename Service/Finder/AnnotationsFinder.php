@@ -1,8 +1,8 @@
 <?php
 
-namespace BlockBundle\Service\Finder;
+namespace Cms\BlockBundle\Service\Finder;
 
-use BlockBundle\Annotation\BlockAnnotationInterface;
+use Cms\BlockBundle\Annotation\BlockAnnotationInterface;
 use Doctrine\Common\Annotations\AnnotationReader;
 
 class AnnotationsFinder implements AnnotationsFinderInterface

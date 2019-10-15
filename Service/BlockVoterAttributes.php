@@ -1,6 +1,6 @@
 <?php
 
-namespace BlockBundle\Service;
+namespace Cms\BlockBundle\Service;
 
 /**
  * Class BlockVoterAttributes

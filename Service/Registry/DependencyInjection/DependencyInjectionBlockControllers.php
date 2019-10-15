@@ -1,6 +1,6 @@
 <?php
 
-namespace BlockBundle\Service\Registry\DependencyInjection;
+namespace Cms\BlockBundle\Service\Registry\DependencyInjection;
 
 /**
  * Class DependencyInjectionBlockControllers

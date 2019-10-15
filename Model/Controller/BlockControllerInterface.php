@@ -1,9 +1,9 @@
 <?php
 
-namespace BlockBundle\Model\Controller;
+namespace Cms\BlockBundle\Model\Controller;
 
-use BlockBundle\Model\Entity\BlockEntityInterface;
-use BlockBundle\Model\Type\BlockTypeInterface;
+use Cms\BlockBundle\Model\Entity\BlockEntityInterface;
+use Cms\BlockBundle\Model\Type\BlockTypeInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 interface BlockControllerInterface

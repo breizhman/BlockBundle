@@ -1,9 +1,9 @@
 <?php
 
-namespace BlockBundle\Serializer\Normalizer;
+namespace Cms\BlockBundle\Serializer\Normalizer;
 
-use BlockBundle\Model\Entity\BlockEntityInterface;
-use BlockBundle\Service\Entity\BlockEntityTransformerInterface;
+use Cms\BlockBundle\Model\Entity\BlockEntityInterface;
+use Cms\BlockBundle\Service\Entity\BlockEntityTransformerInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;

@@ -1,6 +1,6 @@
 <?php
 
-namespace BlockBundle\Model\Type;
+namespace Cms\BlockBundle\Model\Type;
 
 abstract class AbstractType implements BlockTypeInterface
 {

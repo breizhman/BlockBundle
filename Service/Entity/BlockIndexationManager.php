@@ -1,10 +1,10 @@
 <?php
 
-namespace BlockBundle\Service\Entity;
+namespace Cms\BlockBundle\Service\Entity;
 
-use BlockBundle\Entity\BlockIndexation;
-use BlockBundle\Model\Entity\BlockEntityInterface;
-use BlockBundle\Serializer\Encoder\ArrayEncoder;
+use Cms\BlockBundle\Entity\BlockIndexation;
+use Cms\BlockBundle\Model\Entity\BlockEntityInterface;
+use Cms\BlockBundle\Serializer\Encoder\ArrayEncoder;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 

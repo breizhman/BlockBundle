@@ -1,6 +1,6 @@
 <?php
 
-namespace BlockBundle\Exception;
+namespace Cms\BlockBundle\Exception;
 
 class TemplateNotFoundException extends \Exception implements ExceptionInterface
 {

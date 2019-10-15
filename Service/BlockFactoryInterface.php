@@ -1,12 +1,12 @@
 <?php
 
-namespace BlockBundle\Service;
+namespace Cms\BlockBundle\Service;
 
-use BlockBundle\Model\Entity\BlockEntityInterface;
-use BlockBundle\Model\Type\BlockTypeInterface;
-use BlockBundle\Model\Controller\BlockControllerInterface;
-use BlockBundle\Exception\ClassNotFoundException;
-use BlockBundle\Service\Entity\BlockEntityManagerInterface;
+use Cms\BlockBundle\Model\Entity\BlockEntityInterface;
+use Cms\BlockBundle\Model\Type\BlockTypeInterface;
+use Cms\BlockBundle\Model\Controller\BlockControllerInterface;
+use Cms\BlockBundle\Exception\ClassNotFoundException;
+use Cms\BlockBundle\Service\Entity\BlockEntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
 
 interface BlockFactoryInterface

@@ -1,10 +1,10 @@
 <?php
 
-namespace BlockBundle\Service;
+namespace Cms\BlockBundle\Service;
 
-use BlockBundle\Annotation\BlockAnnotationInterface;
-use BlockBundle\DataTransformer\BlockDataTransformerInterface;
-use BlockBundle\Exception\NotFoundException;
+use Cms\BlockBundle\Annotation\BlockAnnotationInterface;
+use Cms\BlockBundle\DataTransformer\BlockDataTransformerInterface;
+use Cms\BlockBundle\Exception\NotFoundException;
 
 /**
  * Class BlockDataTransformers

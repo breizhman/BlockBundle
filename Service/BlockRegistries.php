@@ -1,9 +1,9 @@
 <?php
 
-namespace BlockBundle\Service;
+namespace Cms\BlockBundle\Service;
 
-use BlockBundle\Exception\NotFoundException;
-use BlockBundle\Service\Registry\BlockRegistryInterface;
+use Cms\BlockBundle\Exception\NotFoundException;
+use Cms\BlockBundle\Service\Registry\BlockRegistryInterface;
 
 /**
  * Class BlockRegistries

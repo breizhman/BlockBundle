@@ -1,10 +1,10 @@
 <?php
 
-namespace BlockBundle\Form;
+namespace Cms\BlockBundle\Form;
 
-use BlockBundle\Model\Entity\BlockEntityInterface;
+use Cms\BlockBundle\Model\Entity\BlockEntityInterface;
 
-use BlockBundle\Service\BlockFormsInterface;
+use Cms\BlockBundle\Service\BlockFormsInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;

@@ -1,10 +1,10 @@
 <?php
 
-namespace BlockBundle;
+namespace Cms\BlockBundle;
 
-use BlockBundle\DependencyInjection\BlockDataTransformersPass;
-use BlockBundle\DependencyInjection\BlockPass;
-use BlockBundle\DependencyInjection\BlockRegistriesPass;
+use Cms\BlockBundle\DependencyInjection\BlockDataTransformersPass;
+use Cms\BlockBundle\DependencyInjection\BlockPass;
+use Cms\BlockBundle\DependencyInjection\BlockRegistriesPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 

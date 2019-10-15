@@ -1,9 +1,9 @@
 <?php
 
-namespace BlockBundle\Collection;
+namespace Cms\BlockBundle\Collection;
 
-use BlockBundle\Model\Entity\BlockEntityInterface;
-use BlockBundle\Service\Entity\BlockEntityManagerInterface;
+use Cms\BlockBundle\Model\Entity\BlockEntityInterface;
+use Cms\BlockBundle\Service\Entity\BlockEntityManagerInterface;
 use Closure;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;

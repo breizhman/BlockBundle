@@ -1,6 +1,6 @@
 <?php
 
-namespace BlockBundle\DependencyInjection;
+namespace Cms\BlockBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;

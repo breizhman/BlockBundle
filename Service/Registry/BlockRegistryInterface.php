@@ -1,9 +1,9 @@
 <?php
 
-namespace BlockBundle\Service\Registry;
+namespace Cms\BlockBundle\Service\Registry;
 
-use BlockBundle\Model\Type\BlockTypeInterface;
-use BlockBundle\Exception\InvalidArgumentException;
+use Cms\BlockBundle\Model\Type\BlockTypeInterface;
+use Cms\BlockBundle\Exception\InvalidArgumentException;
 
 interface BlockRegistryInterface
 {

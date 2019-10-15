@@ -1,6 +1,6 @@
 <?php
 
-namespace BlockBundle\Exception;
+namespace Cms\BlockBundle\Exception;
 
 class ArgumentNotFoundException extends \Exception implements ExceptionInterface
 {

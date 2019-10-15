@@ -1,9 +1,9 @@
 <?php
 
-namespace BlockBundle\Service;
+namespace Cms\BlockBundle\Service;
 
-use BlockBundle\Model\Type\BlockTypeInterface;
-use BlockBundle\Exception\ClassNotFoundException;
+use Cms\BlockBundle\Model\Type\BlockTypeInterface;
+use Cms\BlockBundle\Exception\ClassNotFoundException;
 use Doctrine\Common\Inflector\Inflector;
 
 /**

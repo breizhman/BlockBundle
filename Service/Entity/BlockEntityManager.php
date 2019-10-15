@@ -1,10 +1,10 @@
 <?php
 
-namespace BlockBundle\Service\Entity;
+namespace Cms\BlockBundle\Service\Entity;
 
-use BlockBundle\Model\Entity\BlockEntityInterface;
-use BlockBundle\Serializer\Encoder\ArrayEncoder;
-use BlockBundle\Service\Finder\AnnotationsFinderInterface;
+use Cms\BlockBundle\Model\Entity\BlockEntityInterface;
+use Cms\BlockBundle\Serializer\Encoder\ArrayEncoder;
+use Cms\BlockBundle\Service\Finder\AnnotationsFinderInterface;
 use Doctrine\Common\Annotations\Annotation\Target;
 use Doctrine\ORM\Mapping\Table;
 use Symfony\Component\Serializer\SerializerInterface;

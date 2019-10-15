@@ -1,8 +1,8 @@
 <?php
 
-namespace BlockBundle\Service;
+namespace Cms\BlockBundle\Service;
 
-use BlockBundle\Model\Entity\BlockEntityInterface;
+use Cms\BlockBundle\Model\Entity\BlockEntityInterface;
 
 /**
  * Interface BlockRendererInterface

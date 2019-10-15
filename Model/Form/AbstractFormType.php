@@ -1,10 +1,10 @@
 <?php
 
-namespace BlockBundle\Model\Form;
+namespace Cms\BlockBundle\Model\Form;
 
-use BlockBundle\Form\BlockParentType;
+use Cms\BlockBundle\Form\BlockParentType;
 
-use BlockBundle\Model\Type\BlockTypeInterface;
+use Cms\BlockBundle\Model\Type\BlockTypeInterface;
 use Symfony\Component\Form\AbstractType as BaseFormType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;

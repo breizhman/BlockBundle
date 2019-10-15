@@ -1,10 +1,10 @@
 <?php
 
-namespace BlockBundle\DataTransformer;
+namespace Cms\BlockBundle\DataTransformer;
 
-use BlockBundle\Annotation\Type;
-use BlockBundle\Model\Entity\BlockEntityInterface;
-use BlockBundle\Service\BlockFactoryInterface;
+use Cms\BlockBundle\Annotation\Type;
+use Cms\BlockBundle\Model\Entity\BlockEntityInterface;
+use Cms\BlockBundle\Service\BlockFactoryInterface;
 use Doctrine\Common\Annotations\Annotation\Target;
 
 class AssocEntityToTypeTransformer extends AbstractBlockDataTransformer implements BlockDataTransformerInterface

@@ -1,6 +1,6 @@
 <?php
 
-namespace BlockBundle\Service\Entity;
+namespace Cms\BlockBundle\Service\Entity;
 
 interface BlockEntityPropertyInterface
 {

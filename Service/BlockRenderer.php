@@ -1,12 +1,12 @@
 <?php
 
-namespace BlockBundle\Service;
+namespace Cms\BlockBundle\Service;
 
-use BlockBundle\Exception\ThemeNotExistException;
-use BlockBundle\Exception\ThemeNotFoundException;
-use BlockBundle\Model\Controller\BlockControllerInterface;
-use BlockBundle\Model\Entity\BlockEntityInterface;
-use BlockBundle\Exception\TemplateNotFoundException;
+use Cms\BlockBundle\Exception\ThemeNotExistException;
+use Cms\BlockBundle\Exception\ThemeNotFoundException;
+use Cms\BlockBundle\Model\Controller\BlockControllerInterface;
+use Cms\BlockBundle\Model\Entity\BlockEntityInterface;
+use Cms\BlockBundle\Exception\TemplateNotFoundException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Templating\EngineInterface;
 
@@ -58,7 +58,7 @@ class BlockRenderer implements BlockRendererInterface
      * @throws TemplateNotFoundException
      * @throws ThemeNotExistException
      * @throws ThemeNotFoundException
-     * @throws \BlockBundle\Exception\ClassNotFoundException
+     * @throws\Cms\BlockBundle\Exception\ClassNotFoundException
      */
     public function renderBlock(BlockEntityInterface $blockEntity, $parameters = [], string $themeName = null) :? string
     {

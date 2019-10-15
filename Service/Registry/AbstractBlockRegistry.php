@@ -1,11 +1,11 @@
 <?php
 
-namespace BlockBundle\Service\Registry;
+namespace Cms\BlockBundle\Service\Registry;
 
-use BlockBundle\Model\Type\BlockTypeInterface;
-use BlockBundle\Exception\InvalidArgumentException;
-use BlockBundle\Exception\ExceptionInterface;
-use BlockBundle\Service\Registry\DependencyInjection\DependencyInjectionBlockInterface;
+use Cms\BlockBundle\Model\Type\BlockTypeInterface;
+use Cms\BlockBundle\Exception\InvalidArgumentException;
+use Cms\BlockBundle\Exception\ExceptionInterface;
+use Cms\BlockBundle\Service\Registry\DependencyInjection\DependencyInjectionBlockInterface;
 
 abstract class AbstractBlockRegistry implements BlockRegistryInterface
 {

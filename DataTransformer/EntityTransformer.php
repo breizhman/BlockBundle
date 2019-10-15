@@ -1,11 +1,11 @@
 <?php
 
-namespace BlockBundle\DataTransformer;
+namespace Cms\BlockBundle\DataTransformer;
 
-use BlockBundle\Annotation\Entity;
-use BlockBundle\Model\Entity\AbstractEntity;
-use BlockBundle\Model\Entity\BlockEntityInterface;
-use BlockBundle\Service\Finder\AnnotationsFinderInterface;
+use Cms\BlockBundle\Annotation\Entity;
+use Cms\BlockBundle\Model\Entity\AbstractEntity;
+use Cms\BlockBundle\Model\Entity\BlockEntityInterface;
+use Cms\BlockBundle\Service\Finder\AnnotationsFinderInterface;
 use Doctrine\Common\Inflector\Inflector;
 use Doctrine\ORM\EntityManagerInterface;
 

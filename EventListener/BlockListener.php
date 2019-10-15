@@ -1,17 +1,17 @@
 <?php
 
-namespace BlockBundle\EventListener;
+namespace Cms\BlockBundle\EventListener;
 
-use BlockBundle\Model\Entity\BlockEntityInterface;
-use BlockBundle\Service\BlockFactoryInterface;
-use BlockBundle\Service\Entity\BlockEntityManagerInterface;
+use Cms\BlockBundle\Model\Entity\BlockEntityInterface;
+use Cms\BlockBundle\Service\BlockFactoryInterface;
+use Cms\BlockBundle\Service\Entity\BlockEntityManagerInterface;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\UnitOfWork;
 use Symfony\Component\EventDispatcher\Event;
-use BlockBundle\Annotation as BlockAnnotation;
+use Cms\BlockBundle\Annotation as BlockAnnotation;
 
 /**
  * Class BlockListener

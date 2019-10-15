@@ -1,11 +1,11 @@
 <?php
 
-namespace BlockBundle\Service\Registry;
+namespace Cms\BlockBundle\Service\Registry;
 
-use BlockBundle\Model\Type\BlockTypeInterface;
-use BlockBundle\Service\Registry\DependencyInjection\DependencyInjectionBlockInterface;
-use BlockBundle\Service\ResolvedBlockTypeFactoryInterface;
-use BlockBundle\Service\ResolvedBlockTypeInterface;
+use Cms\BlockBundle\Model\Type\BlockTypeInterface;
+use Cms\BlockBundle\Service\Registry\DependencyInjection\DependencyInjectionBlockInterface;
+use Cms\BlockBundle\Service\ResolvedBlockTypeFactoryInterface;
+use Cms\BlockBundle\Service\ResolvedBlockTypeInterface;
 
 /**
  * Class BlockTypesRegistry

@@ -1,11 +1,11 @@
 <?php
 
-namespace BlockBundle\Twig;
+namespace Cms\BlockBundle\Twig;
 
-use BlockBundle\Exception\UnexpectedInterfaceException;
-use BlockBundle\Model\Entity\BlockEntityInterface;
-use BlockBundle\Service\BlockFactoryInterface;
-use BlockBundle\Service\BlockRendererInterface;
+use Cms\BlockBundle\Exception\UnexpectedInterfaceException;
+use Cms\BlockBundle\Model\Entity\BlockEntityInterface;
+use Cms\BlockBundle\Service\BlockFactoryInterface;
+use Cms\BlockBundle\Service\BlockRendererInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Twig\Extension\AbstractExtension;

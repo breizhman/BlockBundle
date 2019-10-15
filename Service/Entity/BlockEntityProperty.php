@@ -1,6 +1,6 @@
 <?php
 
-namespace BlockBundle\Service\Entity;
+namespace Cms\BlockBundle\Service\Entity;
 
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;

@@ -1,10 +1,10 @@
 <?php
 
-namespace BlockBundle\Service\Entity;
+namespace Cms\BlockBundle\Service\Entity;
 
-use BlockBundle\Model\Entity\BlockEntityInterface;
-use BlockBundle\DataTransformer\BlockDataTransformerInterface;
-use BlockBundle\Service\Finder\DataTransformersFinderInterface;
+use Cms\BlockBundle\Model\Entity\BlockEntityInterface;
+use Cms\BlockBundle\DataTransformer\BlockDataTransformerInterface;
+use Cms\BlockBundle\Service\Finder\DataTransformersFinderInterface;
 use Doctrine\Common\Annotations\Annotation\Target;
 
 class BlockEntityTransformer implements BlockEntityTransformerInterface

@@ -1,6 +1,6 @@
 <?php
 
-namespace BlockBundle\Annotation;
+namespace Cms\BlockBundle\Annotation;
 
 
 interface BlockAnnotationInterface
