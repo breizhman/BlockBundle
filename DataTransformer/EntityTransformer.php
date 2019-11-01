@@ -9,6 +9,10 @@ use Cms\BlockBundle\Service\Finder\AnnotationsFinderInterface;
 use Doctrine\Common\Inflector\Inflector;
 use Doctrine\ORM\EntityManagerInterface;
 
+/**
+ * Class EntityTransformer
+ * @package Cms\BlockBundle\DataTransformer
+ */
 class EntityTransformer extends AbstractBlockDataTransformer implements BlockDataTransformerInterface
 {
     /**

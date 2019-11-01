@@ -19,17 +19,13 @@ class BlockController extends Controller
     /**
      * render block view by request
      *
-     * @param Request $request
      * @param string $name
      * @param string $id
      * @return Response
      *
      * @throws \Exception
-     * @throws \Cms\BlockBundle\Exception\TemplateNotFoundException
-     * @throws \Cms\BlockBundle\Exception\ThemeNotExistException
-     * @throws \Cms\BlockBundle\Exception\ThemeNotFoundException
      */
-    public function renderAction(Request $request, string $name, string $id): Response
+    public function render(string $name, string $id): Response
     {
         /** @var BlockIndexation $blockIndexation */
         $blockIndexation = $this->get('block.entity_manager.indexation')->findByIdAndName($id, $name);
@@ -58,9 +54,9 @@ class BlockController extends Controller
      * @param string $action
      *
      * @return Response
-     * @throws \Cms\BlockBundle\Exception\ClassNotFoundException
+     * @throws \Exception
      */
-    public function customAction(string $name, string $id, string $action): Response
+    public function custom(string $name, string $id, string $action): Response
     {
         /** @var BlockIndexation $blockIndexation */
         $blockIndexation = $this->get('block.entity_manager.indexation')->findByIdAndName($id, $name);
