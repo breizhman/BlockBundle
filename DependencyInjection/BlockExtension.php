@@ -18,14 +18,12 @@ class BlockExtension extends Extension
      */
     public function load(array $configs, ContainerBuilder $container)
     {
-        $loader = new YamlFileLoader($container, new FileLocator(dirname(__DIR__) . '/Resources/config'));
-        $loader->load('services.yaml');
-
         $configuration = $this->getConfiguration($configs, $container);
         $config = $this->processConfiguration($configuration, $configs);
 
-        if (!empty($config['themes'])) {
-            $container->setParameter('block.themes', $config['themes']);
-        }
+        $container->setParameter('block.themes', $config['themes'] ?? []);
+
+        $loader = new YamlFileLoader($container, new FileLocator(dirname(__DIR__) . '/config'));
+        $loader->load('services.yaml');
     }
 }
