@@ -7,6 +7,8 @@ use Cms\BlockBundle\Serializer\Encoder\ArrayEncoder;
 use Cms\BlockBundle\Service\Finder\AnnotationsFinderInterface;
 use Doctrine\Common\Annotations\Annotation\Target;
 use Doctrine\ORM\Mapping\Table;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
@@ -72,7 +74,9 @@ class BlockEntityManager implements BlockEntityManagerInterface
      */
     public function load($blockEntityClass, array $data = []):? BlockEntityInterface
     {
-        $blockEntity = $this->serializer->deserialize($data, $blockEntityClass, ArrayEncoder::FORMAT);
+        $blockEntity = $this->serializer->deserialize($data, $blockEntityClass, ArrayEncoder::FORMAT, [
+            ObjectNormalizer::DISABLE_TYPE_ENFORCEMENT => true,
+        ]);
         if ($blockEntity instanceof BlockEntityInterface) {
             // case entity is doctrine table : not override ID entity
             if (empty($this->annotationsFinder->findForClass($blockEntity, [Table::class])) && !$blockEntity->getId()) {
@@ -90,12 +94,12 @@ class BlockEntityManager implements BlockEntityManagerInterface
      */
     public function toArray(BlockEntityInterface $blockEntity):? array
     {
-        $data = $this->serializer->serialize($blockEntity, ArrayEncoder::FORMAT);
-        if (is_array($data)) {
-            return $data;
+        $data = $this->serializer->serialize($blockEntity, JsonEncoder::FORMAT);
+        try {
+            return json_decode($data, true);
+        } catch (\Throwable $t) {
+            return null;
         }
-
-        return null;
     }
 
     /**

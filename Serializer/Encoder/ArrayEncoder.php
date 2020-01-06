@@ -2,9 +2,9 @@
 
 namespace Cms\BlockBundle\Serializer\Encoder;
 
-
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 use Symfony\Component\Serializer\Encoder\EncoderInterface;
+use Symfony\Component\Serializer\Exception\UnsupportedException;
 
 class ArrayEncoder implements EncoderInterface, DecoderInterface
 {
@@ -15,7 +15,7 @@ class ArrayEncoder implements EncoderInterface, DecoderInterface
      */
     public function encode($data, $format, array $context = array())
     {
-        return $data;
+        throw new UnsupportedException('No encode for array format');
     }
 
     /**

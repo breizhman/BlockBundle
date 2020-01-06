@@ -25,8 +25,6 @@ interface BlockDataTransformersInterface
     public function getDataTransformersByAnnotation(BlockAnnotationInterface $annotation, array $targets = []): array;
 
     /**
-     * add transformer
-     *
      * @param string $alias
      * @param mixed $dataTransformer
      * @return BlockDataTransformersInterface

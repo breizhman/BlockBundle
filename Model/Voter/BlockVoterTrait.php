@@ -3,7 +3,7 @@
 namespace Cms\BlockBundle\Model\Voter;
 
 use Cms\BlockBundle\Model\Type\BlockTypeInterface;
-use Cms\BlockBundle\Service\BlockFactoryInterface;
+use Cms\BlockBundle\Service\BlockFactory;
 use Cms\BlockBundle\Service\BlockVoterAttributes;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
@@ -21,16 +21,16 @@ trait BlockVoterTrait
     private $decisionManager;
 
     /**
-     * @var BlockFactoryInterface
+     * @var BlockFactory
      */
     private $blockFactory;
 
     /**
      * AbstractBaseVoter constructor.
      * @param AccessDecisionManagerInterface $decisionManager
-     * @param BlockFactoryInterface $blockFactory
+     * @param BlockFactory $blockFactory
      */
-    public function __construct(AccessDecisionManagerInterface $decisionManager, BlockFactoryInterface $blockFactory)
+    public function __construct(AccessDecisionManagerInterface $decisionManager, BlockFactory $blockFactory)
     {
         $this->decisionManager = $decisionManager;
         $this->blockFactory = $blockFactory;

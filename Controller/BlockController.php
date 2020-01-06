@@ -5,17 +5,43 @@ namespace Cms\BlockBundle\Controller;
 use Cms\BlockBundle\Entity\BlockIndexation;
 use Cms\BlockBundle\Model\Controller\BlockControllerInterface;
 use Cms\BlockBundle\Model\Entity\BlockEntityInterface;
+use Cms\BlockBundle\Service\BlockFactoryInterface;
+use Cms\BlockBundle\Service\BlockRendererInterface;
 use Cms\BlockBundle\Service\ConvertCase;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
+use Cms\BlockBundle\Service\Entity\BlockIndexationManagerInterface;
+use Exception;
+use RuntimeException;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class BlockController
  * @package Cms\BlockBundle\Controller
  */
-class BlockController extends Controller
+class BlockController extends AbstractController
 {
+
+    /**
+     * @var BlockIndexationManagerInterface
+     */
+    protected $indexationManager;
+
+    /**
+     * @var BlockFactoryInterface
+     */
+    protected $factory;
+
+    /**
+     * @var BlockRendererInterface
+     */
+    protected $renderer;
+
+    /**
+     * @var RequestStack
+     */
+    protected $requestStack;
+
     /**
      * render block view by request
      *
@@ -23,27 +49,27 @@ class BlockController extends Controller
      * @param string $id
      * @return Response
      *
-     * @throws \Exception
+     * @throws Exception
      */
-    public function render(string $name, string $id): Response
+    public function loadView(string $name, string $id): Response
     {
         /** @var BlockIndexation $blockIndexation */
-        $blockIndexation = $this->get('block.entity_manager.indexation')->findByIdAndName($id, $name);
+        $blockIndexation = $this->indexationManager->findByIdAndName($id, $name);
         if (!$blockIndexation) {
             throw $this->createNotFoundException(sprintf('Not found block "%s" with id %s ', $name, $id));
         }
 
         /** @var BlockEntityInterface $blockEntity */
-        $blockEntity = $this->get('block.factory')->createEntity($blockIndexation->getName(), $blockIndexation->getData());
+        $blockEntity = $this->factory->createEntity($blockIndexation->getName(), $blockIndexation->getData());
         if (!$blockEntity) {
-            throw new \Exception(sprintf('Error on create block entity "%s"', $name), [
+            throw new RuntimeException(sprintf('Error on create block entity "%s"', $name), [
                 'id' => $id,
                 'name' => $name,
                 'data' => $blockIndexation->getData()
             ]);
         }
 
-        return new Response($this->get('block.renderer')->renderBlock($blockEntity));
+        return new Response($this->renderer->renderBlock($blockEntity));
     }
 
     /**
@@ -54,20 +80,20 @@ class BlockController extends Controller
      * @param string $action
      *
      * @return Response
-     * @throws \Exception
+     * @throws Exception
      */
-    public function custom(string $name, string $id, string $action): Response
+    public function action(string $name, string $id, string $action): Response
     {
         /** @var BlockIndexation $blockIndexation */
-        $blockIndexation = $this->get('block.entity_manager.indexation')->findByIdAndName($id, $name);
+        $blockIndexation = $this->indexationManager->findByIdAndName($id, $name);
         if (!$blockIndexation) {
             throw $this->createNotFoundException(sprintf('Not found block "%s" with id %s ', $name, $id));
         }
 
         /** @var BlockEntityInterface $blockEntity */
-        $blockEntity = $this->get('block.factory')->createEntity($blockIndexation->getName(), $blockIndexation->getData());
+        $blockEntity = $this->factory->createEntity($blockIndexation->getName(), $blockIndexation->getData());
         if (!$blockEntity) {
-            throw new \Exception(sprintf('Error on create block entity "%s"', $name), [
+            throw new RuntimeException(sprintf('Error on create block entity "%s"', $name), [
                 'id' => $id,
                 'name' => $name,
                 'data' => $blockIndexation->getData()
@@ -75,7 +101,7 @@ class BlockController extends Controller
         }
 
         /** @var BlockControllerInterface $blockController */
-        $blockController = $this->get('block.factory')->createController($blockEntity->getName());
+        $blockController = $this->factory->createController($blockEntity->getName());
         if (!$blockController) {
             return new Response();
         }
@@ -93,6 +119,6 @@ class BlockController extends Controller
             ->setBlockEntity($blockEntity)
         ;
 
-        return call_user_func_array([$blockController, $methodAction], [$this->get('request_stack')->getCurrentRequest()]);
+        return $blockController->$methodAction($this->requestStack->getCurrentRequest());
     }
 }

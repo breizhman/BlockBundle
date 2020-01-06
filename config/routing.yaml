@@ -1,13 +1,13 @@
-block_render:
-    path:  /block/{name}/{id}/render
-    controller: Cms\BlockBundle\Controller\BlockController::render
+block_load:
+    path:  /block/{name}/{id}/load
+    controller: Cms\BlockBundle\Controller\BlockController::loadView
     requirements:
         name: "[\\w]+"
         id: "[\\w]+"
 
-block_custom:
+block_action:
     path:  /block/{name}/{id}/{action}
-    controller: Cms\BlockBundle\Controller\BlockController::custom
+    controller: Cms\BlockBundle\Controller\BlockController::action
     requirements:
         name: "[\\w]+"
         id: "[\\w]+"

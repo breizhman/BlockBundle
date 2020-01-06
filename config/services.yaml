@@ -17,23 +17,18 @@ services:
         tags:
             - { name: twig.extension }
 
-    block.serializer:
-        class: 'Symfony\Component\Serializer\Serializer'
-        public: true
-        arguments:
-            - ["@block.serializer.normalizer"]
-            - ["@block.serializer.encoder.array"]
-
     block.serializer.normalizer:
         class: 'Cms\BlockBundle\Serializer\Normalizer\BlockNormalizer'
-        public: true
+        public: false
         arguments:
             - "@serializer.normalizer.object"
             - "@block.entity.transformer"
+        tags: [serializer.normalizer]
 
     block.serializer.encoder.array:
         class: 'Cms\BlockBundle\Serializer\Encoder\ArrayEncoder'
-        public: true
+        public: false
+        tags: [serializer.encoder]
 
     block.factory:
         class: 'Cms\BlockBundle\Service\BlockFactory'
@@ -82,7 +77,7 @@ services:
         arguments:
             - "@request_stack"
             - "@block.factory"
-            - "@templating"
+            - "@twig"
             - "%block.themes%"
 
     block.annotations.finder:

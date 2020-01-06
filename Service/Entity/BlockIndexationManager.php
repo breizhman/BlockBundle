@@ -6,6 +6,7 @@ use Cms\BlockBundle\Entity\BlockIndexation;
 use Cms\BlockBundle\Model\Entity\BlockEntityInterface;
 use Cms\BlockBundle\Serializer\Encoder\ArrayEncoder;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
@@ -52,7 +53,14 @@ class BlockIndexationManager implements BlockIndexationManagerInterface
             ;
         }
 
-        $blockIndexation->setData($this->serializer->serialize(clone $blockEntity, ArrayEncoder::FORMAT));
+        $data = $this->serializer->serialize(clone $blockEntity, JsonEncoder::FORMAT);
+        try {
+            $data = json_decode($data, true);
+        } catch (\Throwable $t) {
+            $data = null;
+        }
+
+        $blockIndexation->setData($data);
 
         $this->entityManager->persist($blockIndexation);
 

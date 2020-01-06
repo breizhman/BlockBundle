@@ -6,6 +6,7 @@ use Cms\BlockBundle\Model\Entity\BlockEntityInterface;
 use Cms\BlockBundle\Service\BlockFactoryInterface;
 use Cms\BlockBundle\Service\Entity\BlockEntityManagerInterface;
 use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
@@ -72,7 +73,7 @@ class BlockListener extends Event
     public function onFlush(OnFlushEventArgs $event)
     {
         if (!$this->isFlushing) {
-            /* @var $em \Doctrine\ORM\EntityManager */
+            /* @var EntityManagerInterface $em */
             $em = $event->getEntityManager();
             /* @var $uow UnitOfWork */
             $uow = $em->getUnitOfWork();
@@ -98,7 +99,7 @@ class BlockListener extends Event
      */
     public function postFlush(PostFlushEventArgs $event)
     {
-        /* @var $em \Doctrine\ORM\EntityManager */
+        /* @var EntityManagerInterface $em */
         $em = $event->getEntityManager();
 
         if (!$this->isFlushing) {
@@ -168,6 +169,7 @@ class BlockListener extends Event
         $blockProperties = $this->getBlockProperties($entity);
 
         if ($blockProperties) {
+
             // save properties info for current entity
             $this->setOriginBlockProperties($entity, $blockProperties);
 
@@ -187,7 +189,7 @@ class BlockListener extends Event
                     } else {
                         $value = $originValue = [];
                         foreach ($blockEntities as $data) {
-                            if ($data && isset($data['name']) && (empty($annotation->names) || in_array($data['name'], (array) $annotation->names))) {
+                            if ($data && isset($data['name']) && (empty($annotation->names) || in_array($data['name'], (array)$annotation->names, true))) {
                                 $blockEntity = $this->blockFactory->createEntity($data['name'], $data);
                                 if ($blockEntity) {
                                     $value[] = $blockEntity;

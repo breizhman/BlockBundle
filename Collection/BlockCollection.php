@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Selectable;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Class BlockCollection
@@ -29,9 +30,7 @@ class BlockCollection implements Collection, Selectable
     private $snapshot = [];
 
     /**
-     * The EntityManager that manages the persistence of the collection.
-     *
-     * @var \Doctrine\ORM\EntityManagerInterface
+     * @var EntityManagerInterface
      */
     private $blockEntityManager;
 

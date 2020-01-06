@@ -2,6 +2,8 @@
 
 namespace Cms\BlockBundle\DependencyInjection;
 
+use Cms\BlockBundle\Model\Controller\BlockControllerInterface;
+use Cms\BlockBundle\Model\Type\BlockTypeInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\Config\FileLocator;
@@ -25,5 +27,11 @@ class BlockExtension extends Extension
 
         $loader = new YamlFileLoader($container, new FileLocator(dirname(__DIR__) . '/config'));
         $loader->load('services.yaml');
+
+        $container->registerForAutoconfiguration(BlockTypeInterface::class)
+            ->addTag('block.type');
+
+        $container->registerForAutoconfiguration(BlockControllerInterface::class)
+            ->addTag('block.controller');
     }
 }

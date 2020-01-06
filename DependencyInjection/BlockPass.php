@@ -3,8 +3,11 @@
 namespace Cms\BlockBundle\DependencyInjection;
 
 
+use Cms\BlockBundle\Exception\ClassNotFoundException;
 use Cms\BlockBundle\Model\Type\BlockTypeInterface;
 use Cms\BlockBundle\Service\ResolvedBlockType;
+use Exception;
+use ReflectionException;
 use Symfony\Component\DependencyInjection\Compiler\PriorityTaggedServiceTrait;
 use Symfony\Component\DependencyInjection\Compiler\ServiceLocatorTagPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -49,9 +52,9 @@ class BlockPass implements CompilerPassInterface
      * @param string $dependencyInjectionTag
      * @param string $serviceTag
      *
-     * @throws \Cms\BlockBundle\Exception\ClassNotFoundException
-     * @throws \Exception
-     * @throws \ReflectionException
+     * @throws ClassNotFoundException
+     * @throws Exception
+     * @throws ReflectionException
      */
     private function processDependencyInjection(string $dependencyInjectionTag,  string $serviceTag)
     {
@@ -60,7 +63,7 @@ class BlockPass implements CompilerPassInterface
         }
 
         switch ($dependencyInjectionTag) {
-            case 'block.dependency_injection.types': $this->processDependencyInjectionTypes($dependencyInjectionTag, $serviceTag);
+            case 'block.dependency_injection.types': $this->processDependencyInjectionTypes($serviceTag);
                 break;
         }
 
@@ -82,18 +85,18 @@ class BlockPass implements CompilerPassInterface
     /**
      * @param string $serviceTag
      *
-     * @throws \Cms\BlockBundle\Exception\ClassNotFoundException
-     * @throws \Exception
-     * @throws \ReflectionException
+     * @throws ClassNotFoundException
+     * @throws Exception
+     * @throws ReflectionException
      */
-    private function processDependencyInjectionTypes(string $dependencyInjectionTag, string $serviceTag)
+    private function processDependencyInjectionTypes(string $serviceTag): void
     {
 
         if (!isset($this->aliasMapByType[$serviceTag])) {
             $this->aliasMapByType[$serviceTag] = [];
         }
 
-        if (!isset($this->servicesMapByType['block.type'])) {
+        if (!isset($this->servicesMapByType[$serviceTag])) {
             $this->servicesMapByType[$serviceTag] = [];
         }
 

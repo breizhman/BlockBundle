@@ -13,8 +13,8 @@ class Configuration implements ConfigurationInterface
 {
     public function getConfigTreeBuilder(): TreeBuilder
     {
-        $tb = new TreeBuilder();
-        $tb->root('block')
+        $tb = new TreeBuilder('block');
+        $tb->getRootNode()
             ->children()
                 ->arrayNode('themes')
                     ->scalarPrototype()->end()
