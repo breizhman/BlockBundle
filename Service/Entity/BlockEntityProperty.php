@@ -60,12 +60,7 @@ class BlockEntityProperty implements BlockEntityPropertyInterface
      */
     public function setValue($objectOrArray, $propertyPath, $value)
     {
-        try {
-            $this->propertyAccessor->setValue($objectOrArray, $propertyPath, $value);
-        } catch(\Throwable $t) {
-
-        }
-
+        $this->propertyAccessor->setValue($objectOrArray, $propertyPath, $value);
         return $this;
     }
 
@@ -74,10 +69,6 @@ class BlockEntityProperty implements BlockEntityPropertyInterface
      */
     public function getValue($objectOrArray, string $propertyPath)
     {
-        try {
-            return $this->propertyAccessor->getValue($objectOrArray, $propertyPath);
-        } catch(\Throwable $t) {
-            return null;
-        }
+        return $this->propertyAccessor->getValue($objectOrArray, $propertyPath);
     }
 }
