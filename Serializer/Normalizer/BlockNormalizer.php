@@ -45,8 +45,6 @@ class BlockNormalizer implements NormalizerInterface, DenormalizerInterface, Ser
             $object = $this->entityTransformer->reverseTransform($object);
         }
 
-        dump('normalize', $this->objectNormalizer->normalize($object, $format, $context));
-
         return $this->objectNormalizer->normalize($object, $format, $context);
     }
 
