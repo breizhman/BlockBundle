@@ -128,7 +128,7 @@ class BlockListener extends Event
 
             $em->flush();
 
-            $this->isFlushing = false;
+            //$this->isFlushing = false;
         }
     }
 
@@ -181,21 +181,21 @@ class BlockListener extends Event
                 if ($blockEntities) {
 
                     // case only one block entity
-                    if ($annotation  instanceof BlockAnnotation\Type) {
-                        $blockEntities['name'] = $annotation->name;
-                        $value = $originValue = $this->blockFactory->createEntity($annotation->name, $blockEntities);
-
+                    if ($annotation instanceof BlockAnnotation\Type) {
+                        if (is_array($blockEntities) && isset($blockEntities[0])) {
+                            $value = $blockEntities[0];
+                        }
+                    }
                     // case many block entity (block collection)
-                    } else {
+                    else {
                         $value = $originValue = [];
                         foreach ($blockEntities as $data) {
-                            if ($data && isset($data['name']) && (empty($annotation->names) || in_array($data['name'], (array)$annotation->names, true))) {
-                                $blockEntity = $this->blockFactory->createEntity($data['name'], $data);
-                                if ($blockEntity) {
-                                    $value[] = $blockEntity;
-                                    $originValue[$blockEntity->getId()] = clone $blockEntity;
-                                }
+                            if (!$data instanceof BlockEntityInterface) {
+                               continue;
                             }
+
+                            $value[] = $data;
+                            $originValue[$data->getId()] = clone $data;
                         }
                     }
                 }
@@ -227,6 +227,7 @@ class BlockListener extends Event
                 /** @var BlockEntityInterface $blockEntity */
                 foreach ($blockEntities as $blockEntity) {
                     if ($blockEntity && $blockEntity instanceof BlockEntityInterface) {
+
                         $this->blockEntityManager->persist($blockEntity, false);
                         $this->addBlockEntityForCreateData($entity, $property, $blockEntity);
                     }
@@ -304,22 +305,54 @@ class BlockListener extends Event
     protected function runBlockProperties(object $entity, array $blockProperties, \Closure $callFunc): BlockListener
     {
         foreach ($blockProperties as $property) {
-            if ($property['annotation']) {
-
-                $blockEntities = $this->blockEntityManager->getProperty()->getValue($entity, $property['name']);
-
-                if (!is_array($blockEntities)) {
-                    $blockEntities = $blockEntities ? [$blockEntities] : [];
-                }
-
-                // all origin block entity must be to delete
-                $entitiesToDelete = $property['value'] ?? [];
-                if ($entitiesToDelete instanceof BlockEntityInterface) {
-                    $entitiesToDelete = [$entitiesToDelete->getId() => $entitiesToDelete];
-                }
-
-                call_user_func_array($callFunc, [$entity, $property, $blockEntities, $entitiesToDelete]);
+            if (!$property['annotation']) {
+                continue;
             }
+
+            $annotation = $property['annotation'];
+            $blockEntities = $this->blockEntityManager->getProperty()->getValue($entity, $property['name']);
+
+            if ($blockEntities) {
+
+                if ($annotation instanceof BlockAnnotation\Type && is_array($blockEntities)) {
+                    $blockEntities['name'] = $annotation->name;
+                    $blockEntities = $this->blockFactory->createEntity($annotation->name, $blockEntities);
+                }
+
+                if ($annotation instanceof BlockAnnotation\Collection) {
+                    foreach ($blockEntities as $pos => $data) {
+                        $blockEntity = null;
+
+                        if ($data instanceof BlockEntityInterface) {
+                            $blockEntity = $data;
+                        }
+
+                        if (is_array($data) && isset($data['name']) && (empty($annotation->names) || in_array($data['name'], (array)$annotation->names, true))) {
+                            $blockEntity = $this->blockFactory->createEntity($data['name'], $data);
+                        }
+
+                        $blockEntities[$pos] = $blockEntity;
+                    }
+                }
+            }
+
+            // all origin block entity must be to delete
+            $entitiesToDelete = $property['value'] ?? [];
+            if (
+                $entitiesToDelete instanceof BlockEntityInterface
+                &&
+                (!$blockEntities instanceof BlockEntityInterface || $entitiesToDelete->getId() !== $blockEntities->getId())
+            ) {
+                $entitiesToDelete = [$entitiesToDelete->getId() => $entitiesToDelete];
+            } else {
+                $entitiesToDelete = [];
+            }
+
+            if (!is_array($blockEntities)) {
+                $blockEntities = $blockEntities ? [$blockEntities] : [];
+            }
+
+            call_user_func_array($callFunc, [$entity, $property, $blockEntities, $entitiesToDelete]);
         }
 
         return $this;

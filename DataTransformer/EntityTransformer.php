@@ -2,6 +2,7 @@
 
 namespace Cms\BlockBundle\DataTransformer;
 
+use App\Entity\Page;
 use Cms\BlockBundle\Annotation\Entity;
 use Cms\BlockBundle\Model\Entity\AbstractEntity;
 use Cms\BlockBundle\Model\Entity\BlockEntityInterface;
@@ -11,6 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Class EntityTransformer
+ *
  * @package Cms\BlockBundle\DataTransformer
  */
 class EntityTransformer extends AbstractBlockDataTransformer implements BlockDataTransformerInterface
@@ -27,7 +29,8 @@ class EntityTransformer extends AbstractBlockDataTransformer implements BlockDat
 
     /**
      * EntityTransformer constructor.
-     * @param EntityManagerInterface $entityManager
+     *
+     * @param EntityManagerInterface     $entityManager
      * @param AnnotationsFinderInterface $annotationsFinder
      */
     public function __construct(EntityManagerInterface $entityManager, AnnotationsFinderInterface $annotationsFinder)
@@ -44,16 +47,19 @@ class EntityTransformer extends AbstractBlockDataTransformer implements BlockDat
         $class = $this->getClassName($value);
         $propertyValue = $value;
         if (is_object($value)) {
-            if ($value instanceof BlockEntityInterface) {
-                $propertyValue = $value->getId();
-            } else {
-                $propertyValue = $this->getPropertyValue($value);
-            }
+            $propertyValue = $this->getPropertyValue($value);
         }
 
-        $newValue = $this->entityManager->getRepository($class)->findOneBy([
-            $this->getPropertyName() => $propertyValue,
-        ]);
+        $newValue = null;
+        foreach ($this->getProperties() as $property) {
+            $newValue = $this->entityManager->getRepository($class)->findOneBy([
+                $property => $propertyValue,
+            ]);
+
+            if ($newValue) {
+                break;
+            }
+        }
 
         if ($value instanceof BlockEntityInterface && $newValue instanceof BlockEntityInterface) {
             $newValue->setName($value->getName());
@@ -120,6 +126,7 @@ class EntityTransformer extends AbstractBlockDataTransformer implements BlockDat
 
     /**
      * @param object $object
+     *
      * @return mixed|null
      */
     public function getClassName($object)
@@ -128,15 +135,16 @@ class EntityTransformer extends AbstractBlockDataTransformer implements BlockDat
     }
 
     /**
-     * @return string|null
+     * @return array
      */
-    public function getPropertyName():? string
+    public function getProperties(): array
     {
-        return $this->annotation->property ?? 'id';
+        return $this->annotation->properties ?? ['id'];
     }
 
     /**
      * @param object $object
+     *
      * @return mixed|null
      */
     public function getPropertyValue(object $object)
@@ -146,16 +154,20 @@ class EntityTransformer extends AbstractBlockDataTransformer implements BlockDat
             return null;
         }
 
-        $methodSuffix = Inflector::classify($this->getPropertyName());
-        $methodName = sprintf('get%s', $methodSuffix);
-        if (!method_exists($object, $methodName)) {
-            $methodName = sprintf('is%s', $methodSuffix);
-        }
-        if (!method_exists($object, $methodName)) {
-            return null;
+        foreach ($this->getProperties() as $property) {
+            $methodSuffix = Inflector::classify($property);
+            $methodName = sprintf('get%s', $methodSuffix);
+            if (!method_exists($object, $methodName)) {
+                $methodName = sprintf('is%s', $methodSuffix);
+            }
+            if (!method_exists($object, $methodName)) {
+                continue;
+            }
+
+            return call_user_func_array([$object, $methodName], []);
         }
 
-        return call_user_func_array([$object, $methodName], []);
+        return null;
     }
 
     /**
@@ -163,6 +175,6 @@ class EntityTransformer extends AbstractBlockDataTransformer implements BlockDat
      */
     public function getAnnotations(): array
     {
-        return [ Entity::class ];
+        return [Entity::class];
     }
 }

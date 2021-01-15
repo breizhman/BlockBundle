@@ -36,6 +36,11 @@ class TypeTransformer extends AbstractBlockDataTransformer implements BlockDataT
         if (empty($value)) {
             return $value;
         }
+
+        if ($value instanceof BlockEntityInterface) {
+            return $value;
+        }
+
         return $this->blockFactory->createEntity($this->annotation->name, (array) $value);
     }
 

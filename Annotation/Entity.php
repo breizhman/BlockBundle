@@ -16,11 +16,11 @@ final class Entity implements BlockAnnotationInterface
     public $class = null;
 
     /**
-     * property used to find entity
+     * properties used to find entity
      *
-     * @var string
+     * @var string[]
      */
-    public $property = 'id';
+    public $properties = ['id'];
 
     /**
      * @var array

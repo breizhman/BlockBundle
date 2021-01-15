@@ -2,6 +2,7 @@
 
 namespace Cms\BlockBundle\Service\Entity;
 
+use App\Block\Common\Entity\LinkButton;
 use Cms\BlockBundle\Model\Entity\BlockEntityInterface;
 use Cms\BlockBundle\DataTransformer\BlockDataTransformerInterface;
 use Cms\BlockBundle\Service\Finder\DataTransformersFinderInterface;
