@@ -21,6 +21,7 @@ class AssocEntityToTypeTransformer extends AbstractBlockDataTransformer implemen
 
     /**
      * TypeTransformer constructor.
+     *
      * @param BlockFactoryInterface $blockFactory
      */
     public function __construct(BlockFactoryInterface $blockFactory)
@@ -63,9 +64,10 @@ class AssocEntityToTypeTransformer extends AbstractBlockDataTransformer implemen
 
     /**
      * @param $value
+     *
      * @return null|BlockEntityInterface
      */
-    protected function addNameToEntity($value):? BlockEntityInterface
+    protected function addNameToEntity($value): ?BlockEntityInterface
     {
         if (!(is_object($value) && $value instanceof BlockEntityInterface)) {
             return null;
@@ -76,7 +78,8 @@ class AssocEntityToTypeTransformer extends AbstractBlockDataTransformer implemen
             return null;
         }
 
-        $value->setName($blockType->getName());
+        $value->setBlockType($blockType->getName());
+
         return $value;
     }
 
@@ -85,7 +88,7 @@ class AssocEntityToTypeTransformer extends AbstractBlockDataTransformer implemen
      */
     public function getAnnotations(): array
     {
-        return [ Type::class ];
+        return [Type::class];
     }
 
     /**

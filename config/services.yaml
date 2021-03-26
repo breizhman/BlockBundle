@@ -7,6 +7,13 @@ imports:
 services:
 
     Cms\BlockBundle\Service\BlockFactory: '@block.factory'
+    Cms\BlockBundle\Service\BlockRenderer: '@block.renderer'
+
+    Cms\BlockBundle\Controller\:
+        resource: '../Controller/'
+        public: true
+        autowire: true
+        tags: ['controller.service_arguments']
 
     block.twig.extension:
         class: 'Cms\BlockBundle\Twig\BlockExtension'
@@ -23,6 +30,7 @@ services:
         arguments:
             - "@serializer.normalizer.object"
             - "@block.entity.transformer"
+            - "@event_dispatcher"
         tags: [serializer.normalizer]
 
     block.serializer.encoder.array:
@@ -59,8 +67,8 @@ services:
         abstract:  true
         public: true
         arguments:
+            - "@block.entity_manager"
             - "@block.forms"
-            - "@service_container"
 
     block.form_type.collection:
         class: 'Cms\BlockBundle\Form\BlockCollectionType'
@@ -79,7 +87,14 @@ services:
             - "@block.factory"
             - "@twig"
             - "%block.themes%"
+            - '@App\EntityManager\CategoryManager'
 
     block.annotations.finder:
         class: 'Cms\BlockBundle\Service\Finder\AnnotationsFinder'
         public: true
+
+    Cms\BlockBundle\EventListener\BlockFactoryAccessorListener:
+        arguments:
+            - "@block.factory"
+        tags:
+            - { name: doctrine.event_listener, event: block_factory_accessor }

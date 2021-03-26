@@ -11,11 +11,12 @@ services:
         class: 'Cms\BlockBundle\Service\Entity\BlockEntityManager'
         public: true
         arguments:
+            - "@block.registries"
+            - "@doctrine.orm.entity_manager"
             - "@block.entity.transformer"
             - "@block.entity.property"
             - "@serializer"
             - "@block.annotations.finder"
-            - "@block.entity_manager.indexation"
 
     block.entity.transformer:
         class: 'Cms\BlockBundle\Service\Entity\BlockEntityTransformer'
@@ -24,19 +25,22 @@ services:
             - "@block.entity.property"
             - "@block.data_transformers.finder"
 
+    block.entity.event_listener:
+        class: 'Cms\BlockBundle\EventListener\BlockEntityListener'
+        arguments:
+            - "@block.entity_manager"
+        tags:
+            - { name: kernel.event_subscriber }
+
     block.event_listener:
         class: 'Cms\BlockBundle\EventListener\BlockListener'
         arguments:
             - "@block.factory"
             - "@block.entity_manager"
         tags:
+            - { name: doctrine.event_listener, event: postLoad, lazy: true }
+            - { name: doctrine.event_listener, event: postPersist, lazy: true }
+            - { name: doctrine.event_listener, event: preFlush, lazy: true }
             - { name: doctrine.event_listener, event: onFlush, lazy: true }
             - { name: doctrine.event_listener, event: postFlush, lazy: true }
-            - { name: doctrine.event_listener, event: postLoad, lazy: true }
 
-    block.entity_manager.indexation:
-        class: 'Cms\BlockBundle\Service\Entity\BlockIndexationManager'
-        public: true
-        arguments:
-            - "@serializer"
-            - "@doctrine.orm.entity_manager"

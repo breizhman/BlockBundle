@@ -83,7 +83,7 @@ class BlockCollectionForm extends Block {
         let _this = this;
         this.elem.action.create.on('click', function(e) {
             e.preventDefault();
-            _this.addBlock($(this).data('blockName'));
+            _this.addBlock($(this).data('blockType'));
         });
 
         this.elem.list.sortable({
@@ -135,16 +135,16 @@ class BlockCollectionForm extends Block {
     }
 
     /**
-     * @param {string} blockName
+     * @param {string} blockType
      */
-    addBlock(blockName) {
-        if (_.isUndefined(this.elem.templates[blockName])) {
+    addBlock(blockType) {
+        if (_.isUndefined(this.elem.templates[blockType])) {
             return;
         }
 
         // replace id and name of prototype
         let block = FormUtils.parseTemplate(
-            this.elem.templates[blockName],
+            this.elem.templates[blockType],
             this.elem.list.find(this.selector.block).length
         );
 
@@ -178,7 +178,7 @@ class BlockCollectionForm extends Block {
         let order = [];
         this.elem.list.find(this.selector.block).each(function() {
             order.push({
-                'name' : $(this).data('blockName'),
+                'name' : $(this).data('blockType'),
                 'pos' : _.last(_.split($(this).attr('id'), '_'))
             });
         });
@@ -197,7 +197,7 @@ class BlockCollectionForm extends Block {
             if (!_.isUndefined(data.name) && !_.isUndefined(data.pos)) {
 
                 // get block by name and pos
-                let block = _this.elem.list.find(_this.selector.block + '[data-block-name="' + data.name + '"]')[data.pos];
+                let block = _this.elem.list.find(_this.selector.block + '[data-block-type="' + data.name + '"]')[data.pos];
                 if (!_.isUndefined(block)) {
 
                     if (_.isUndefined(currentBlock)) {
@@ -226,7 +226,7 @@ class BlockCollectionForm extends Block {
     initTemplates() {
         let _this = this;
         this.elem.body.find(this.selector.template).each(function() {
-            _this.elem.templates[$(this).data('blockName')] = $(this);
+            _this.elem.templates[$(this).data('blockType')] = $(this);
         });
     }
 }

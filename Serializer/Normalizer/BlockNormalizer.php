@@ -2,8 +2,10 @@
 
 namespace Cms\BlockBundle\Serializer\Normalizer;
 
+use Cms\BlockBundle\Event\BlockEntityEvent;
 use Cms\BlockBundle\Model\Entity\BlockEntityInterface;
 use Cms\BlockBundle\Service\Entity\BlockEntityTransformerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -12,6 +14,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * Class BlockNormalizer
+ *
  * @package Cms\BlockBundle\Serializer\Normalizer
  */
 class BlockNormalizer implements NormalizerInterface, DenormalizerInterface, SerializerAwareInterface
@@ -27,13 +30,25 @@ class BlockNormalizer implements NormalizerInterface, DenormalizerInterface, Ser
     protected $entityTransformer;
 
     /**
-     * @param ObjectNormalizer $objectNormalizer
-     * @param BlockEntityTransformerInterface $entityTransformer
+     * @var EventDispatcherInterface
      */
-    public function __construct(ObjectNormalizer $objectNormalizer, BlockEntityTransformerInterface $entityTransformer)
-    {
+    protected $eventDispatcher;
+
+    /**
+     * BlockNormalizer constructor.
+     *
+     * @param ObjectNormalizer                $objectNormalizer
+     * @param BlockEntityTransformerInterface $entityTransformer
+     * @param EventDispatcherInterface        $eventDispatcher
+     */
+    public function __construct(
+        ObjectNormalizer $objectNormalizer,
+        BlockEntityTransformerInterface $entityTransformer,
+        EventDispatcherInterface $eventDispatcher
+    ) {
         $this->objectNormalizer = $objectNormalizer;
         $this->entityTransformer = $entityTransformer;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -41,11 +56,30 @@ class BlockNormalizer implements NormalizerInterface, DenormalizerInterface, Ser
      */
     public function normalize($object, $format = null, array $context = array())
     {
-        if ($object instanceof  BlockEntityInterface) {
-            $object = $this->entityTransformer->reverseTransform($object);
+        if (!$object instanceof BlockEntityInterface) {
+            return $this->objectNormalizer->normalize($object, $format, $context);
         }
 
-        return $this->objectNormalizer->normalize($object, $format, $context);
+        $object = $this->entityTransformer->reverseTransform($object);
+
+        $result = $this->objectNormalizer->normalize($object, $format, $context);
+
+        if (!is_array($result)) {
+            return $result;
+        }
+
+        return array_filter($result, static function ($value) {
+            if (is_bool($value)) {
+                return true;
+            }
+
+            if (is_numeric($value)) {
+                return $value !== null;
+            }
+
+
+            return !empty($value);
+        });
     }
 
     /**
@@ -66,11 +100,14 @@ class BlockNormalizer implements NormalizerInterface, DenormalizerInterface, Ser
     public function denormalize($data, $class, $format = null, array $context = [])
     {
         $object = $this->objectNormalizer->denormalize($data, $class, $format, $context);
-        if ($object instanceof  BlockEntityInterface) {
-            $object = $this->entityTransformer->transform($object);
+
+        if (!$object instanceof BlockEntityInterface) {
+            return $object;
         }
 
-        return $object;
+        $this->eventDispatcher->dispatch( new BlockEntityEvent($object), BlockEntityEvent::BUILD);
+
+        return $this->entityTransformer->transform($object);
     }
 
     /**

@@ -2,17 +2,25 @@
 
 namespace Cms\BlockBundle\Service\Entity;
 
+use App\Entity\AdvertLocation;
+use Cms\BlockBundle\Entity\Block;
+use Cms\BlockBundle\Exception\NotFoundException;
+use Cms\BlockBundle\Repository\BlockRepository;
 use Cms\BlockBundle\Model\Entity\BlockEntityInterface;
+use Cms\BlockBundle\Model\Type\BlockTypeInterface;
 use Cms\BlockBundle\Serializer\Encoder\ArrayEncoder;
+use Cms\BlockBundle\Service\BlockRegistriesInterface;
 use Cms\BlockBundle\Service\Finder\AnnotationsFinderInterface;
 use Doctrine\Common\Annotations\Annotation\Target;
-use Doctrine\ORM\Mapping\Table;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\Proxy;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * Class BlockEntityManager
+ *
  * @package Cms\BlockBundle\Service\Entity
  */
 class BlockEntityManager implements BlockEntityManagerInterface
@@ -20,7 +28,37 @@ class BlockEntityManager implements BlockEntityManagerInterface
     /**
      * @var array
      */
-    protected $registerEntities = [];
+    protected $blocksLoaded = [];
+
+    /**
+     * @var array
+     */
+    protected $blocksOriginal = [];
+
+    /**
+     * @var array
+     */
+    protected $blocksToInsert = [];
+
+    /**
+     * @var array
+     */
+    protected $blocksToUpdate = [];
+
+    /**
+     * @var array
+     */
+    protected $blocksToRemove = [];
+
+    /**
+     * @var BlockRegistriesInterface
+     */
+    protected $registries;
+
+    /**
+     * @var EntityManagerInterface
+     */
+    protected $entityManager;
 
     /**
      * @var BlockEntityTransformerInterface
@@ -43,56 +81,120 @@ class BlockEntityManager implements BlockEntityManagerInterface
     protected $annotationsFinder;
 
     /**
-     * @var BlockIndexationManagerInterface
-     */
-    protected $blockIndexationManager;
-
-    /**
      * BlockEntityManager constructor.
+     *
+     * @param BlockRegistriesInterface        $registries
+     * @param EntityManagerInterface          $entityManager
      * @param BlockEntityTransformerInterface $entityTransformer
-     * @param BlockEntityProperty $property
-     * @param SerializerInterface $serializer
-     * @param AnnotationsFinderInterface $annotationsFinder
-     * @param BlockIndexationManagerInterface $blockIndexationManager
+     * @param BlockEntityProperty             $property
+     * @param SerializerInterface             $serializer
+     * @param AnnotationsFinderInterface      $annotationsFinder
      */
     public function __construct(
+        BlockRegistriesInterface $registries,
+        EntityManagerInterface $entityManager,
         BlockEntityTransformerInterface $entityTransformer,
         BlockEntityProperty $property,
         SerializerInterface $serializer,
-        AnnotationsFinderInterface $annotationsFinder,
-        BlockIndexationManagerInterface $blockIndexationManager
-    ) {
+        AnnotationsFinderInterface $annotationsFinder
+    )
+    {
+        $this->registries = $registries;
+        $this->entityManager = $entityManager;
         $this->entityTransformer = $entityTransformer;
         $this->property = $property;
         $this->serializer = $serializer;
         $this->annotationsFinder = $annotationsFinder;
-        $this->blockIndexationManager = $blockIndexationManager;
     }
 
     /**
      * @inheritdoc
      */
-    public function load($blockEntityClass, array $data = []):? BlockEntityInterface
+    public function create($nameOrClass, array $data = []): ?BlockEntityInterface
     {
-        $blockEntity = $this->serializer->deserialize($data, $blockEntityClass, ArrayEncoder::FORMAT, [
-            ObjectNormalizer::DISABLE_TYPE_ENFORCEMENT => true,
-        ]);
-        if ($blockEntity instanceof BlockEntityInterface) {
-            // case entity is doctrine table : not override ID entity
-            if (empty($this->annotationsFinder->findForClass($blockEntity, [Table::class])) && !$blockEntity->getId()) {
-                $blockEntity->setId($this->generateId());
-            }
-            $this->registerEntities[$blockEntity->getId()] = clone $blockEntity;
+        return $this->createByNameAndData($nameOrClass, $data);
+
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function load(string $id): ?BlockEntityInterface
+    {
+        if (isset($this->blocksLoaded[$id])) {
+            return $this->blocksLoaded[$id];
+        }
+
+        $data = $this->getRepository()->findDataById($id);
+        if (empty($data)) {
+            throw new NotFoundException(sprintf('Block with ID %s not found', $id));
+        }
+
+        $blockEntity = $this->createByNameAndData($data['blockType'], $data);
+        if (!$blockEntity) {
             return $blockEntity;
         }
 
-        return null;
+        $this->register($blockEntity);
+
+        return $blockEntity;
+    }
+
+    /**
+     * @param BlockEntityInterface $blockEntity
+     *
+     * @throws NotFoundException
+     */
+    protected function initEntity(BlockEntityInterface $blockEntity): void
+    {
+        if (!$blockEntity->getBlockId()) {
+            $blockEntity->setBlockId($this->generateId());
+        }
+
+        if (!$blockEntity->getBlockType()) {
+            $blockType = $this->getTypeByEntityClass(get_class($blockEntity));
+            if (!$blockType) {
+                throw new NotFoundException(sprintf('No block type class found for entity "%s"', get_class($blockEntity)));
+            }
+
+            $blockEntity->setBlockType($blockType->getName());
+        }
+    }
+
+    /**
+     * @param string $nameOrClass
+     * @param array  $data
+     *
+     * @return BlockEntityInterface|null
+     */
+    protected function createByNameAndData(string $nameOrClass, array $data = []): ?BlockEntityInterface
+    {
+        $blockEntityClass = null;
+        if (class_exists($nameOrClass) && is_subclass_of($nameOrClass, BlockEntityInterface::class)) {
+            $blockEntityClass = $nameOrClass;
+        }
+
+        if (!$blockEntityClass) {
+            $blockEntityClass = $this->getType($nameOrClass)->getEntity();
+        }
+
+        $blockEntity = $this->serializer->deserialize($data, $blockEntityClass, ArrayEncoder::FORMAT, [
+            ObjectNormalizer::DISABLE_TYPE_ENFORCEMENT => true,
+        ]);
+
+        if (!$blockEntity instanceof BlockEntityInterface) {
+            return null;
+        }
+
+        $this->initEntity($blockEntity);
+
+        return $blockEntity;
     }
 
     /**
      * @inheritdoc
      */
-    public function toArray(BlockEntityInterface $blockEntity):? array
+    public function toArray(BlockEntityInterface $blockEntity): ?array
     {
         $data = $this->serializer->serialize($blockEntity, JsonEncoder::FORMAT);
         try {
@@ -102,55 +204,43 @@ class BlockEntityManager implements BlockEntityManagerInterface
         }
     }
 
+
     /**
      * @inheritdoc
      */
-    public function persist(BlockEntityInterface $blockEntity, bool $indexation = true): BlockEntityManagerInterface
+    public function persist(BlockEntityInterface $blockEntity): BlockEntityManagerInterface
     {
-        // generate id if not exist
-        if (!$blockEntity->getId()) {
-            $blockEntity->setId($this->generateId());
-        }
+        $this->initEntity($blockEntity);
+
+        $this->prepareForPersist($blockEntity);
 
         // case entity is doctrine entity : persist direct
-        if (!empty($this->annotationsFinder->findForClass($blockEntity, [Table::class]))) {
+        if ($this->isEntity($blockEntity)) {
             $this->entityTransformer->persist($blockEntity);
-        } else {
 
-            $this->entityTransformer->persist($blockEntity, [], [Target::TARGET_CLASS]);
+            return $this;
+        }
 
-            // check entity property update
-            $originBlockEntity = $this->getOriginEntity($blockEntity);
-            $propertiesState = $this->getPropertiesNameByState($blockEntity, [BlockEntityProperty::STATE_ADD, BlockEntityProperty::STATE_UPDATE, BlockEntityProperty::STATE_DELETE]);
+        $this->entityTransformer->persist($blockEntity, [], [Target::TARGET_CLASS]);
 
-            // run action persist or remove on property
-            if ($propertiesState) {
-                foreach ($propertiesState as $state => $propertiesName) {
+        // check entity property update
+        $propertiesState = $this->getPropertiesNameByState($blockEntity, [BlockEntityProperty::STATE_ADD, BlockEntityProperty::STATE_UPDATE, BlockEntityProperty::STATE_DELETE]);
+        if (!$propertiesState) {
+            return $this;
+        }
 
-                    if (in_array($state, [BlockEntityProperty::STATE_ADD, BlockEntityProperty::STATE_UPDATE])) {
-                        $blockEntity = $this->entityTransformer->persist($blockEntity, $propertiesName);
-                    }
+        // run action persist or remove on property
+        foreach ($propertiesState as $state => $propertiesName) {
 
-                    if ($originBlockEntity && in_array($state, [BlockEntityProperty::STATE_DELETE])) {
-                        $this->entityTransformer->remove($originBlockEntity, $propertiesName);
-                    }
-                }
+            if (in_array($state, [BlockEntityProperty::STATE_ADD, BlockEntityProperty::STATE_UPDATE], true)) {
+                $blockEntity = $this->entityTransformer->persist($blockEntity, $propertiesName);
+            }
+
+            if (!$this->isNew($blockEntity) && $state === BlockEntityProperty::STATE_DELETE) {
+                $this->entityTransformer->remove($blockEntity, $propertiesName);
             }
         }
 
-        if ($indexation) {
-            $this->persistIndexation($blockEntity);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function persistIndexation(BlockEntityInterface $blockEntity): BlockEntityManagerInterface
-    {
-        $this->blockIndexationManager->persist($blockEntity);
         return $this;
     }
 
@@ -159,34 +249,151 @@ class BlockEntityManager implements BlockEntityManagerInterface
      */
     public function remove(BlockEntityInterface $blockEntity): BlockEntityManagerInterface
     {
+        $this->prepareForRemove($blockEntity);
+
         $this->entityTransformer->remove($blockEntity);
-        $this->removeIndexation($blockEntity);
+
         return $this;
     }
 
     /**
      * @inheritdoc
      */
-    public function removeIndexation(BlockEntityInterface $blockEntity): BlockEntityManagerInterface
+    public function flush(): BlockEntityManagerInterface
     {
-        $this->blockIndexationManager->remove($blockEntity);
+        /** @var BlockEntityInterface $blockEntity */
+        foreach ($this->blocksToInsert as $blockEntity) {
+            $this->getRepository()->insert($this->toArray($blockEntity));
+
+            $this->register($blockEntity);
+        }
+
+        foreach ($this->blocksToUpdate as $blockEntity) {
+            $this->getRepository()->update($this->toArray($blockEntity));
+
+            $this->register($blockEntity);
+        }
+
+        foreach ($this->blocksToRemove as $blockEntity) {
+            $this->getRepository()->delete($this->toArray($blockEntity));
+
+            $this->register($blockEntity);
+        }
+
         return $this;
     }
+
+    /**
+     * @param BlockEntityInterface $blockEntity
+     */
+    public function register(BlockEntityInterface $blockEntity): void
+    {
+        $this->clearPrepare($blockEntity);
+
+        $key = $blockEntity->getBlockId() ?? spl_object_hash($blockEntity);
+
+        $this->blocksLoaded[$key] = $blockEntity;
+        $this->blocksOriginal[$key] = clone $blockEntity;
+    }
+
+    /**
+     * @param BlockEntityInterface $blockEntity
+     */
+    protected function clearPrepare(BlockEntityInterface $blockEntity): void
+    {
+        $oid = spl_object_hash($blockEntity);
+
+        unset($this->blocksToInsert[$oid], $this->blocksToUpdate[$oid], $this->blocksToRemove[$oid]);
+    }
+
+    /**
+     * @param BlockEntityInterface $blockEntity
+     */
+    protected function prepareForPersist(BlockEntityInterface $blockEntity): void
+    {
+        $oid = spl_object_hash($blockEntity);
+        $this->clearPrepare($blockEntity);
+
+        if (!$this->isNew($blockEntity)) {
+            $this->blocksToUpdate[$oid] = $blockEntity;
+
+            return;
+        }
+
+        $this->blocksToInsert[$oid] = $blockEntity;
+    }
+
+    /**
+     * @param BlockEntityInterface $blockEntity
+     */
+    protected function prepareForRemove(BlockEntityInterface $blockEntity): void
+    {
+        $this->clearPrepare($blockEntity);
+
+        $this->blocksToRemove[spl_object_hash($blockEntity)] = $blockEntity;
+    }
+
 
     /**
      * @param BlockEntityInterface $blockEntity
      *
      * @return BlockEntityInterface
      */
-    protected function getOriginEntity(BlockEntityInterface $blockEntity):? BlockEntityInterface
+    protected function getOriginEntity(BlockEntityInterface $blockEntity): ?BlockEntityInterface
     {
-        return $this->registerEntities[$blockEntity->getId()] ?? null;
+        if ($blockEntity->getBlockId() && isset($this->blocksOriginal[$blockEntity->getBlockId()])) {
+            return $this->blocksOriginal[$blockEntity->getBlockId()];
+        }
+
+        return $this->blocksOriginal[spl_object_hash($blockEntity)] ?? null;
     }
 
     /**
      * @param BlockEntityInterface $blockEntity
-     * @param array $filterStates
-     * @param array $filterProperties
+     *
+     * @return bool
+     */
+    protected function isNew(BlockEntityInterface $blockEntity): bool
+    {
+        return $this->getOriginEntity($blockEntity) === null;
+    }
+
+    /**
+     * @param BlockEntityInterface $blockEntity
+     *
+     * @return bool
+     */
+    public function hasChanged(BlockEntityInterface $blockEntity): bool
+    {
+        try {
+            return count($this->getPropertiesByState($blockEntity, [
+                    BlockEntityProperty::STATE_ADD,
+                    BlockEntityProperty::STATE_UPDATE,
+                    BlockEntityProperty::STATE_DELETE,
+                ])) > 0;
+        } catch (\Throwable $t) {
+            return false;
+        }
+    }
+
+    /**
+     * @param object $entity
+     *
+     * @return bool
+     */
+    public function isEntity(object $entity): bool
+    {
+        $class = ($entity instanceof Proxy)
+            ? get_parent_class($entity)
+            : get_class($entity);
+
+        return !$this->entityManager->getMetadataFactory()->isTransient($class);
+    }
+
+    /**
+     * @param BlockEntityInterface $blockEntity
+     * @param array                $filterStates
+     * @param array                $filterProperties
      *
      * @return array
      *
@@ -199,25 +406,51 @@ class BlockEntityManager implements BlockEntityManagerInterface
 
         /** @var \ReflectionProperty $reflectionProperty */
         foreach ($this->getReflectionProperties($blockEntity, $filterProperties) as $reflectionProperty) {
-            // case entity already exist, compare all property
-            if ($originBlockEntity) {
-                $oldValue = $this->property->getValue($originBlockEntity, $reflectionProperty->getName());
-                $newValue = $this->property->getValue($blockEntity, $reflectionProperty->getName());
 
-                $state = $this->property->compare($oldValue, $newValue);
-            // case new entity, all property has add state
-            } else {
-                $state = BlockEntityProperty::STATE_ADD;
+            if ($reflectionProperty->getName() === 'blockId') {
+                continue;
             }
+
+            if ($reflectionProperty->getName() === 'blockName') {
+                continue;
+            }
+
+            // case new entity managed by doctrine
+            if ($this->isEntity($blockEntity)) {
+
+                // case entity must be insert into bdd, all property to ADD
+                if ($this->entityManager->getUnitOfWork()->isScheduledForInsert($blockEntity)) {
+                    $propertiesStates[BlockEntityProperty::STATE_ADD][] = $reflectionProperty;
+                    continue;
+                }
+
+                // case entity must be delete into bdd, all property to DELETE
+                if ($this->entityManager->getUnitOfWork()->isScheduledForDelete($blockEntity)) {
+                    $propertiesStates[BlockEntityProperty::STATE_DELETE][] = $reflectionProperty;
+                    continue;
+                }
+            }
+
+            // case new entity, all property has add state
+            if (!$originBlockEntity) {
+                $propertiesStates[BlockEntityProperty::STATE_ADD][] = $reflectionProperty;
+                continue;
+            }
+
+            // case entity already exist, compare all property
+            $oldValue = $this->property->getValue($originBlockEntity, $reflectionProperty->getName());
+            $newValue = $this->property->getValue($blockEntity, $reflectionProperty->getName());
+
+            $state = $this->property->compare($oldValue, $newValue);
 
             $propertiesStates[$state][] = $reflectionProperty;
         }
 
         // exclude status not in $filterStatus
         if ($propertiesStates && $filterStates) {
-            $propertiesStates = array_filter($propertiesStates, function($status) use ($filterStates) {
-                return in_array($status, $filterStates);
-            }, ARRAY_FILTER_USE_KEY );
+            $propertiesStates = array_filter($propertiesStates, static function ($status) use ($filterStates) {
+                return in_array($status, $filterStates, true);
+            }, ARRAY_FILTER_USE_KEY);
         }
 
         return $propertiesStates;
@@ -225,14 +458,14 @@ class BlockEntityManager implements BlockEntityManagerInterface
 
     /**
      * @param BlockEntityInterface $blockEntity
-     * @param array $filterStates
-     * @param array $filterProperties
+     * @param array                $filterStates
+     * @param array                $filterProperties
      *
      * @return array
      *
      * @throws \ReflectionException
      */
-    protected function getPropertiesNameByState(BlockEntityInterface $blockEntity, $filterStates = [], $filterProperties = []):? array
+    protected function getPropertiesNameByState(BlockEntityInterface $blockEntity, $filterStates = [], $filterProperties = []): ?array
     {
         $propertiesByState = $this->getPropertiesByState($blockEntity, $filterStates, $filterProperties);
         if ($propertiesByState) {
@@ -249,19 +482,20 @@ class BlockEntityManager implements BlockEntityManagerInterface
 
     /**
      * @param BlockEntityInterface $blockEntity
-     * @param array $filterProperties
+     * @param array                $filterProperties
+     *
      * @return array
      *
      * @throws \ReflectionException
      */
     protected function getReflectionProperties(BlockEntityInterface $blockEntity, $filterProperties = []): array
     {
-        $properties = ( new \ReflectionClass(get_class($blockEntity)) )->getProperties();
+        $properties = (new \ReflectionClass(get_class($blockEntity)))->getProperties();
 
         if ($filterProperties) {
-            $properties = array_filter($properties, function($property) use ($filterProperties) {
+            $properties = array_filter($properties, function ($property) use ($filterProperties) {
                 /** @var \ReflectionProperty $property */
-                return in_array($property->getName(), $filterProperties);
+                return in_array($property->getName(), $filterProperties, true);
             });
         }
 
@@ -269,21 +503,65 @@ class BlockEntityManager implements BlockEntityManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * @param string $nameOrClass
+     *
+     * @return BlockTypeInterface
      */
-    public function findOneById($id):? BlockEntityInterface
+    protected function getType(string $nameOrClass): BlockTypeInterface
     {
-        return $this->registerEntities[$id] ?? null;
+        $registry = $this->registries->getRegistry('type');
+        if (!$registry->has($nameOrClass)) {
+            throw new \RuntimeException(sprintf(' Not find block class entity with name %s', $nameOrClass));
+        }
+
+        return $registry->get($nameOrClass);
+    }
+
+    /**
+     * @param string $blockEntityClass
+     *
+     * @return BlockTypeInterface|null
+     */
+    protected function getTypeByEntityClass(string $blockEntityClass): ?BlockTypeInterface
+    {
+        $registry = $this->registries->getRegistry('type');
+
+        foreach ($registry->getClassNames() as $blockTypeClass) {
+
+            /** @var BlockTypeInterface $blockType */
+            $blockType = $registry->get($blockTypeClass);
+            if ($blockType->getEntity() === $blockEntityClass) {
+                return $blockType;
+            }
+        }
+
+        return null;
     }
 
     /**
      * generate unique identify for block entity
-
+     *
      * @return string
      */
-    public function generateId(): string
+    protected function generateId(): string
     {
-        return uniqid();
+        return uniqid('', false);
+    }
+
+    /**
+     * @return BlockRepository
+     */
+    protected function getRepository(): BlockRepository
+    {
+        return $this->entityManager->getRepository(Block::class);
+    }
+
+    /**
+     * @return EntityManagerInterface
+     */
+    public function getEntityManager(): EntityManagerInterface
+    {
+        return $this->entityManager;
     }
 
     /**
@@ -293,5 +571,4 @@ class BlockEntityManager implements BlockEntityManagerInterface
     {
         return $this->property;
     }
-
 }

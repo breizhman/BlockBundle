@@ -2,9 +2,11 @@
 
 namespace Cms\BlockBundle\Form;
 
+use Cms\BlockBundle\Collection\BlockCollection;
 use Cms\BlockBundle\Model\Entity\BlockEntityInterface;
 
 use Cms\BlockBundle\Service\BlockFormsInterface;
+use Cms\BlockBundle\Service\Entity\BlockEntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -22,16 +24,24 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 abstract class AbstractBlockCollectionType extends AbstractType implements DataTransformerInterface
 {
     /**
+     * @var BlockEntityManagerInterface
+     */
+    protected $blockEntityManager = null;
+
+    /**
      * @var BlockFormsInterface|null
      */
     protected $blockForms = null;
 
     /**
-     * BlockCollectionType constructor.
-     * @param BlockFormsInterface|null $blockForms
+     * AbstractBlockCollectionType constructor.
+     *
+     * @param BlockEntityManagerInterface $blockEntityManager
+     * @param BlockFormsInterface|null    $blockForms
      */
-    public function __construct(BlockFormsInterface $blockForms = null)
+    public function __construct(BlockEntityManagerInterface $blockEntityManager, BlockFormsInterface $blockForms = null)
     {
+        $this->blockEntityManager = $blockEntityManager;
         $this->blockForms = $blockForms;
     }
 
@@ -64,7 +74,7 @@ abstract class AbstractBlockCollectionType extends AbstractType implements DataT
                         'required' => false,
                         'from_collection' => true,
                         'attr' => [
-                            'data-block-name' => $name,
+                            'data-block-type' => $name,
                         ],
                     ],
                     'label' => false,
@@ -88,6 +98,7 @@ abstract class AbstractBlockCollectionType extends AbstractType implements DataT
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
+            'data_class' => null,
             'entries' => [],
             'collection_options' => [],
         ]);
@@ -106,10 +117,10 @@ abstract class AbstractBlockCollectionType extends AbstractType implements DataT
             /** @var BlockEntityInterface $block */
             foreach ($data as $block) {
                 if ($block instanceof BlockEntityInterface) {
-                    $transformData[$block->getName()][] = $block;
+                    $transformData[$block->getBlockType()][] = $block;
                     $transformData['block_order'][] = json_encode([
-                        'name' => $block->getName(),
-                        'pos' => (count($transformData[$block->getName()]) - 1),
+                        'name' => $block->getBlockType(),
+                        'pos' => (count($transformData[$block->getBlockType()]) - 1),
                     ]);
                 }
             }
@@ -136,7 +147,7 @@ abstract class AbstractBlockCollectionType extends AbstractType implements DataT
             }
         }
 
-        return $reverseData;
+        return new BlockCollection($this->blockEntityManager, $reverseData);
     }
 
     public function getParent()

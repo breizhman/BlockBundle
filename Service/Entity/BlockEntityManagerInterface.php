@@ -2,70 +2,91 @@
 
 namespace Cms\BlockBundle\Service\Entity;
 
+use Cms\BlockBundle\Exception\NotFoundException;
 use Cms\BlockBundle\Model\Entity\BlockEntityInterface;
+use Doctrine\ORM\EntityManagerInterface;
 
 interface BlockEntityManagerInterface
 {
     /**
-     * load block entity from data
+     * create block entity with data
      *
-     * @param $blockEntityClass
-     * @param array $data
+     * @param string $nameOrClass
+     * @param array  $data
+     *
      * @return BlockEntityInterface|null
      */
-    public function load($blockEntityClass, array $data = []):? BlockEntityInterface;
+    public function create(string $nameOrClass, array $data = []): ?BlockEntityInterface;
+
+    /**
+     * load block entity by ID and name
+     *
+     * @param string $id
+     *
+     * @return BlockEntityInterface|null
+     *
+     * @throws NotFoundException
+     */
+    public function load(string $id): ?BlockEntityInterface;
+
+    /**
+     * @param BlockEntityInterface $blockEntity
+     */
+    public function register(BlockEntityInterface $blockEntity): void;
 
     /**
      * convert block entity to array
      *
      * @param BlockEntityInterface $blockEntity
+     *
      * @return array|null
      */
-    public function toArray(BlockEntityInterface $blockEntity):? array;
+    public function toArray(BlockEntityInterface $blockEntity): ?array;
 
     /**
      * persist block entity data
      *
      * @param BlockEntityInterface $blockEntity
-     * @param bool $indexation
+     *
      * @return BlockEntityManagerInterface
      */
-    public function persist(BlockEntityInterface $blockEntity, bool $indexation = true): BlockEntityManagerInterface;
-
-    /**
-     * @param BlockEntityInterface $blockEntity
-     * @return BlockEntityManagerInterface
-     */
-    public function persistIndexation(BlockEntityInterface $blockEntity): BlockEntityManagerInterface;
+    public function persist(BlockEntityInterface $blockEntity): BlockEntityManagerInterface;
 
     /**
      * remove block entity data
      *
      * @param BlockEntityInterface $blockEntity
+     *
      * @return BlockEntityManagerInterface
      */
     public function remove(BlockEntityInterface $blockEntity): BlockEntityManagerInterface;
 
     /**
-     * @param BlockEntityInterface $blockEntity
+     * flush block entities
+     *
      * @return BlockEntityManagerInterface
      */
-    public function removeIndexation(BlockEntityInterface $blockEntity): BlockEntityManagerInterface;
+    public function flush(): BlockEntityManagerInterface;
 
     /**
-     * find one block entity by id
+     * @param BlockEntityInterface $blockEntity
      *
-     * @param mixed $id
-     * @return BlockEntityInterface|null
+     * @return bool
      */
-    public function findOneById($id):? BlockEntityInterface;
+    public function hasChanged(BlockEntityInterface $blockEntity): bool;
 
     /**
-     * generate unique identify for block entity
-
-     * @return string
+     * @param object $entity
+     *
+     * @return bool
      */
-    public function generateId(): string;
+    public function isEntity(object $entity): bool;
+
+    /**
+     * @return EntityManagerInterface
+     */
+    public function getEntityManager(): EntityManagerInterface;
+
     /**
      * @return BlockEntityProperty
      */

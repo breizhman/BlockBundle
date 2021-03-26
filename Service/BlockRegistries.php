@@ -3,6 +3,7 @@
 namespace Cms\BlockBundle\Service;
 
 use Cms\BlockBundle\Exception\NotFoundException;
+use Cms\BlockBundle\Model\Type\BlockTypeInterface;
 use Cms\BlockBundle\Service\Registry\BlockRegistryInterface;
 
 /**
@@ -33,6 +34,7 @@ class BlockRegistries implements BlockRegistriesInterface
     public function addRegistry(string $alias, $registry): BlockRegistriesInterface
     {
         $this->registries[$alias] = $registry;
+
         return $this;
     }
 }

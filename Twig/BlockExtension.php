@@ -77,14 +77,14 @@ class BlockExtension extends AbstractExtension
     }
 
     /**
-     * @param string $blockName
+     * @param string $blockType
      * @param array $data
      * @param string|null $themeName
      * @return string
      */
-    public function renderBlockByName(string $blockName, $data = [], $parameters = [], string $themeName = null)
+    public function renderBlockByType(string $blockType, $data = [], $parameters = [], string $themeName = null)
     {
-       return $this->renderBlock($this->blockFactory->createEntity($blockName, $data), $parameters, $themeName);
+       return $this->renderBlock($this->blockFactory->createEntity($blockType, $data), $parameters, $themeName);
     }
 
     /**

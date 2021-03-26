@@ -2,41 +2,36 @@
 
 namespace Cms\BlockBundle\DataTransformer;
 
-use App\Entity\Page;
+use App\Entity\AdvertLocation;
 use Cms\BlockBundle\Annotation\Entity;
-use Cms\BlockBundle\Model\Entity\AbstractEntity;
+use Cms\BlockBundle\Model\Entity\BlockEntity;
 use Cms\BlockBundle\Model\Entity\BlockEntityInterface;
-use Cms\BlockBundle\Service\Finder\AnnotationsFinderInterface;
+use Cms\BlockBundle\Service\Entity\BlockEntityManagerInterface;
 use Doctrine\Common\Inflector\Inflector;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\UnitOfWork;
 
 /**
  * Class EntityTransformer
  *
  * @package Cms\BlockBundle\DataTransformer
+ * @property Entity $annotation
  */
-class EntityTransformer extends AbstractBlockDataTransformer implements BlockDataTransformerInterface
+class EntityTransformer extends AbstractBlockDataTransformer
 {
     /**
-     * @var EntityManagerInterface
+     * @var BlockEntityManagerInterface
      */
-    private $entityManager;
-
-    /**
-     * @var AnnotationsFinderInterface
-     */
-    private $annotationsFinder;
+    private $blockEntityManager;
 
     /**
      * EntityTransformer constructor.
      *
-     * @param EntityManagerInterface     $entityManager
-     * @param AnnotationsFinderInterface $annotationsFinder
+     * @param BlockEntityManagerInterface $blockEntityManager
      */
-    public function __construct(EntityManagerInterface $entityManager, AnnotationsFinderInterface $annotationsFinder)
+    public function __construct(BlockEntityManagerInterface $blockEntityManager)
     {
-        $this->entityManager = $entityManager;
-        $this->annotationsFinder = $annotationsFinder;
+        $this->blockEntityManager = $blockEntityManager;
     }
 
     /**
@@ -45,24 +40,27 @@ class EntityTransformer extends AbstractBlockDataTransformer implements BlockDat
     public function transform($value)
     {
         $class = $this->getClassName($value);
-        $propertyValue = $value;
-        if (is_object($value)) {
-            $propertyValue = $this->getPropertyValue($value);
+        if (!$class) {
+            return $value;
         }
 
-        $newValue = null;
-        foreach ($this->getProperties() as $property) {
-            $newValue = $this->entityManager->getRepository($class)->findOneBy([
-                $property => $propertyValue,
-            ]);
-
-            if ($newValue) {
-                break;
-            }
+        $propertiesValue = $this->getPropertiesWithValue($value);
+        if (!$propertiesValue) {
+            return null;
         }
 
-        if ($value instanceof BlockEntityInterface && $newValue instanceof BlockEntityInterface) {
-            $newValue->setName($value->getName());
+        $newValue = $this->getEntityManager()->getRepository($class)->findOneBy($propertiesValue);
+        if (!$newValue) {
+            return null;
+        }
+
+        if (!$newValue instanceof BlockEntityInterface) {
+            return $newValue;
+        }
+
+        if ($value instanceof BlockEntityInterface) {
+            $newValue->setBlockId($value->getBlockId());
+            $newValue->setBlockType($value->getBlockType());
         }
 
         return $newValue;
@@ -78,13 +76,21 @@ class EntityTransformer extends AbstractBlockDataTransformer implements BlockDat
         }
 
         if (!$value instanceof BlockEntityInterface) {
-            return $this->getPropertyValue($value);
+            return $this->getPropertiesWithValue($value);
         }
 
-        return (new class() extends AbstractEntity {})
-            ->setId($this->getPropertyValue($value))
-            ->setName($value->getName())
-        ;
+        $class = $this->getClassName($value);
+
+        /** @var BlockEntityInterface $blockEntity */
+        $blockEntity = new $class;
+        $blockEntity->setBlockId($value->getBlockId());
+        $blockEntity->setBlockType($value->getBlockType());
+
+        foreach ($this->getPropertiesWithValue($value) as $property => $propertyValue) {
+            $this->blockEntityManager->getProperty()->setValue($blockEntity, $property, $propertyValue);
+        }
+
+        return $blockEntity;
     }
 
     /**
@@ -94,13 +100,16 @@ class EntityTransformer extends AbstractBlockDataTransformer implements BlockDat
     {
         if (
             is_object($value)
-            && !empty($this->annotationsFinder->findForClass($value, [\Doctrine\ORM\Mapping\Entity::class]))
-            && in_array(__FUNCTION__, $this->annotation->cascade)
-        ) {
-            $this->entityManager->persist($value);
+            && $this->blockEntityManager->isEntity($value)
+            && in_array(__FUNCTION__, $this->annotation->cascade, true)
 
-            $md = $this->entityManager->getClassMetadata(get_class($value));
-            $this->entityManager->getUnitOfWork()->computeChangeSet($md, $value);
+            && !$this->getEntityManager()->contains($value)
+            && $this->getEntityManager()->getUnitOfWork()->getSingleIdentifierValue($value) === null
+        ) {
+            $this->getEntityManager()->persist($value);
+
+            $md = $this->getEntityManager()->getClassMetadata(get_class($value));
+            $this->getEntityManager()->getUnitOfWork()->computeChangeSet($md, $value);
         }
 
         return $value;
@@ -113,12 +122,12 @@ class EntityTransformer extends AbstractBlockDataTransformer implements BlockDat
     {
         if (
             is_object($value)
-            && !empty($this->annotationsFinder->findForClass($value, [\Doctrine\ORM\Mapping\Entity::class]))
-            && in_array(__FUNCTION__, $this->annotation->cascade)
+            && $this->blockEntityManager->isEntity($value)
+            && in_array(__FUNCTION__, $this->annotation->cascade, true)
         ) {
             // attached entity to entity manager
-            $entity = $this->entityManager->merge($value);
-            $this->entityManager->remove($entity);
+            //$value = $this->getEntityManager()->merge($value);
+            $this->getEntityManager()->remove($value);
         }
 
         return $value;
@@ -143,31 +152,57 @@ class EntityTransformer extends AbstractBlockDataTransformer implements BlockDat
     }
 
     /**
-     * @param object $object
+     * @param mixed $valueOrObject
      *
-     * @return mixed|null
+     * @return array
      */
-    public function getPropertyValue(object $object)
+    public function getPropertiesWithValue($valueOrObject): array
     {
-        $class = $this->getClassName($object);
-        if (!$object instanceof $class) {
-            return null;
+        $result = [];
+        if (!is_object($valueOrObject)) {
+
+            if (!is_array($valueOrObject)) {
+                $valueOrObject = [$valueOrObject];
+            }
+
+            foreach ($this->getProperties() as $property) {
+                if (!isset($valueOrObject[$property])) {
+                    continue;
+                }
+
+                $result[$property] = $valueOrObject[$property];
+            }
+
+            return $result;
+        }
+
+        $class = $this->getClassName($valueOrObject);
+        if (!$valueOrObject instanceof $class) {
+            return $result;
         }
 
         foreach ($this->getProperties() as $property) {
             $methodSuffix = Inflector::classify($property);
             $methodName = sprintf('get%s', $methodSuffix);
-            if (!method_exists($object, $methodName)) {
+            if (!method_exists($valueOrObject, $methodName)) {
                 $methodName = sprintf('is%s', $methodSuffix);
             }
-            if (!method_exists($object, $methodName)) {
+            if (!method_exists($valueOrObject, $methodName)) {
                 continue;
             }
 
-            return call_user_func_array([$object, $methodName], []);
+            $result[$property] = call_user_func_array([$valueOrObject, $methodName], []);
         }
 
-        return null;
+        return $result;
+    }
+
+    /**
+     * @return EntityManagerInterface
+     */
+    protected function getEntityManager(): EntityManagerInterface
+    {
+        return $this->blockEntityManager->getEntityManager();
     }
 
     /**

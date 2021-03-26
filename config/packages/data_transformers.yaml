@@ -16,8 +16,7 @@ services:
         class: 'Cms\BlockBundle\DataTransformer\EntityTransformer'
         public: true
         arguments:
-            - "@doctrine.orm.entity_manager"
-            - "@block.annotations.finder"
+            - "@block.entity_manager"
         tags:
             - { name: block.data_transformer, alias: 'entity' }
 

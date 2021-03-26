@@ -2,17 +2,22 @@
 
 namespace Cms\BlockBundle\Model\Entity;
 
+/**
+ * Class AbstractEntity
+ *
+ * @package Cms\BlockBundle\Model\Entity
+ */
 abstract class AbstractEntity implements BlockEntityInterface
 {
     /**
      * @var string
      */
-    protected $id;
+    protected $blockId;
 
     /**
      * @var string
      */
-    protected $name;
+    protected $blockType;
 
     /**
      * on clone, clone sub objects
@@ -28,36 +33,40 @@ abstract class AbstractEntity implements BlockEntityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
-    public function getId()
+    public function getBlockId()
     {
-        return $this->id;
+        return $this->blockId;
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $blockId
+     *
+     * @return BlockEntityInterface
      */
-    public function setId($id): BlockEntityInterface
+    public function setBlockId($id): BlockEntityInterface
     {
-        $this->id = $id;
+        $this->blockId = $id;
         return $this;
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
-    public function getName()
+    public function getBlockType()
     {
-        return $this->name;
+        return $this->blockType;
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $type
+     *
+     * @return BlockEntityInterface
      */
-    public function setName($name): BlockEntityInterface
+    public function setBlockType($type): BlockEntityInterface
     {
-        $this->name = $name;
+        $this->blockType = $type;
         return $this;
     }
 }

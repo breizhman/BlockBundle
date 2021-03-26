@@ -2,6 +2,11 @@
 
 namespace Cms\BlockBundle\Model\Entity;
 
+/**
+ * Interface BlockEntityInterface
+ *
+ * @package Cms\BlockBundle\Model\Entity
+ */
 interface BlockEntityInterface
 {
     /**
@@ -9,28 +14,30 @@ interface BlockEntityInterface
      *
      * @return string
      */
-    public function getId();
+    public function getBlockId();
 
     /**
      * set id of the block
      *
      * @param $id
+     *
      * @return BlockEntityInterface
      */
-    public function setId($id): BlockEntityInterface;
+    public function setBlockId($id): BlockEntityInterface;
 
     /**
-     * get name of the block
+     * get type of the block
      *
      * @return string
      */
-    public function getName();
+    public function getBlockType();
 
     /**
-     * set name of the block
+     * set type of the block
      *
-     * @param $name
+     * @param $type
+     *
      * @return BlockEntityInterface
      */
-    public function setName($name): BlockEntityInterface;
+    public function setBlockType($type): BlockEntityInterface;
 }

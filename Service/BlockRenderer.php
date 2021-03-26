@@ -2,6 +2,7 @@
 
 namespace Cms\BlockBundle\Service;
 
+use App\EntityManager\CategoryManager;
 use Cms\BlockBundle\Exception\ClassNotFoundException;
 use Cms\BlockBundle\Exception\ThemeNotExistException;
 use Cms\BlockBundle\Exception\ThemeNotFoundException;
@@ -16,6 +17,7 @@ use Twig\Error\SyntaxError;
 
 /**
  * Class BlockRenderer
+ *
  * @package Cms\BlockBundle\Service
  */
 class BlockRenderer implements BlockRendererInterface
@@ -40,28 +42,30 @@ class BlockRenderer implements BlockRendererInterface
      */
     private $themes;
 
+    private $categoryManager;
     /**
      * BlockRenderer constructor.
      *
-     * @param RequestStack $requestStack
+     * @param RequestStack          $requestStack
      * @param BlockFactoryInterface $blockFactory
-     * @param Environment $twig
-     * @param array $themes
+     * @param Environment           $twig
+     * @param array                 $themes
      */
-    public function __construct(RequestStack $requestStack, BlockFactoryInterface $blockFactory, Environment $twig, array $themes = [])
+    public function __construct(RequestStack $requestStack, BlockFactoryInterface $blockFactory, Environment $twig, array $themes = [], CategoryManager $categoryManager)
     {
         $this->requestStack = $requestStack;
         $this->twig = $twig;
         $this->blockFactory = $blockFactory;
         $this->themes = $themes;
+        $this->categoryManager = $categoryManager;
     }
 
     /**
      * @inheritdoc
      *
      * @param BlockEntityInterface $blockEntity
-     * @param array $parameters
-     * @param string|null $themeName
+     * @param array                $parameters
+     * @param string|null          $themeName
      *
      * @return string|null
      *
@@ -73,10 +77,10 @@ class BlockRenderer implements BlockRendererInterface
      * @throws ThemeNotFoundException
      * @throws ClassNotFoundException
      */
-    public function renderBlock(BlockEntityInterface $blockEntity, $parameters = [], string $themeName = null) :? string
+    public function renderBlock(BlockEntityInterface $blockEntity, $parameters = [], string $themeName = null): ?string
     {
         /** @var BlockControllerInterface $blockController */
-        $blockController = $this->blockFactory->createController($blockEntity->getName());
+        $blockController = $this->blockFactory->createController($blockEntity->getBlockType());
         if (!$blockController) {
             return null;
         }
@@ -86,23 +90,24 @@ class BlockRenderer implements BlockRendererInterface
 
         $blockController
             ->setParameters($parameters)
-            ->setBlockEntity($blockEntity)
-        ;
+            ->setBlockEntity($blockEntity);
 
-        if ($blockController->renderAction($this->requestStack->getCurrentRequest())) {
-            return $this->renderTemplate($blockController->getTemplate(),
-                array_replace_recursive($parameters, $blockController->getParameters())
-            , $themeName);
+        if (!$blockController->renderAction($this->requestStack->getCurrentRequest())) {
+            return null;
         }
 
-        return null;
+        return $this->renderTemplate(
+            $blockController->getTemplate(),
+            array_replace_recursive($parameters, $blockController->getParameters()),
+            $themeName
+        );
     }
 
     /**
      * @inheritdoc
      *
-     * @param string $template
-     * @param array $parameters
+     * @param string      $template
+     * @param array       $parameters
      * @param string|null $themeName
      *
      * @return string|null
@@ -114,14 +119,14 @@ class BlockRenderer implements BlockRendererInterface
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    public function renderTemplate(string $template, $parameters = [], string $themeName = null) :? string
+    public function renderTemplate(string $template, $parameters = [], string $themeName = null): ?string
     {
         if (!$this->twig->getLoader()->exists($template)) {
             throw new TemplateNotFoundException($template);
         }
 
         return $this->twig->render($template, array_replace_recursive([
-            'theme_layout' => $this->getThemeLayout($parameters['theme'] ?? $themeName)
+            'theme_layout' => $this->getThemeLayout($parameters['theme'] ?? $themeName),
         ], $parameters));
     }
 
@@ -131,7 +136,7 @@ class BlockRenderer implements BlockRendererInterface
      * @throws ThemeNotExistException
      * @throws ThemeNotFoundException
      */
-    public function getThemeLayout(string $name = null) : string
+    public function getThemeLayout(string $name = null): string
     {
         if (!isset($this->themes[$name])) {
             $name = 'default';

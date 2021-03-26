@@ -7,6 +7,7 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 /**
  * Class BlockEntityProperty
+ *
  * @package Cms\BlockBundle\Service\Entity
  */
 class BlockEntityProperty implements BlockEntityPropertyInterface
@@ -34,25 +35,34 @@ class BlockEntityProperty implements BlockEntityPropertyInterface
      */
     public function compare($oldValue, $newValue): string
     {
-        if (!is_null($oldValue)) {
-            if (!is_null($newValue)) {
+        if (is_object($oldValue) && is_object($newValue)) {
 
-                if (!(is_object($oldValue) || is_object($oldValue))) {
-                    $oldValue = serialize($oldValue);
-                    $newValue = serialize($newValue);
-                }
-
-                if ($newValue === $oldValue) {
-                    return static::STATE_UNCHANGE;
-                } else {
-                    return static::STATE_UPDATE;
-                }
-            } else {
-                return static::STATE_DELETE;
+            // compare only properties of objects
+            if ($newValue == $oldValue) {
+                return static::STATE_UNCHANGE;
             }
-        } else {
+        } else if ($newValue === $oldValue) {
+            return static::STATE_UNCHANGE;
+        }
+
+        if ($oldValue === null) {
             return static::STATE_ADD;
         }
+
+        if ($newValue === null) {
+            return static::STATE_DELETE;
+        }
+
+        if (!(is_object($oldValue) || is_object($newValue))) {
+            $oldValue = serialize($oldValue);
+            $newValue = serialize($newValue);
+        }
+
+        if ($newValue !== $oldValue) {
+            return static::STATE_UPDATE;
+        }
+
+        return static::STATE_UNCHANGE;
     }
 
     /**
@@ -61,6 +71,7 @@ class BlockEntityProperty implements BlockEntityPropertyInterface
     public function setValue($objectOrArray, $propertyPath, $value)
     {
         $this->propertyAccessor->setValue($objectOrArray, $propertyPath, $value);
+
         return $this;
     }
 

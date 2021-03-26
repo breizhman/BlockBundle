@@ -58,7 +58,7 @@ class BlockEntityTransformer implements BlockEntityTransformerInterface
      */
     public function persist(BlockEntityInterface $blockEntity, array $filterProperties = [], array $targets = []): BlockEntityInterface
     {
-        return $this->runDataTransformers($blockEntity, function ($dataTransformer, $value) {
+        return $this->runDataTransformers($blockEntity, static function ($dataTransformer, $value) {
             /** @var BlockDataTransformerInterface $dataTransformer */
             return $dataTransformer->persist($value);
         }, $filterProperties, $targets);
@@ -126,12 +126,11 @@ class BlockEntityTransformer implements BlockEntityTransformerInterface
      * @return BlockEntityInterface
      * @throws \ReflectionException
      */
-    protected function runDataTransformersForProperty(BlockEntityInterface $blockEntity, $callDataTransformFunc, array $filterProperties = []): BlockEntityInterface
+    protected function runDataTransformersForProperty(BlockEntityInterface $blockEntity, callable $callDataTransformFunc, array $filterProperties = []): BlockEntityInterface
     {
         $properties = $this->getReflectionProperties($blockEntity);
         /** @var \ReflectionProperty $property */
         foreach ($properties as $property) {
-
             if (empty($filterProperties) || in_array($property->getName(), $filterProperties)) {
 
                 $value = $this->property->getValue($blockEntity, $property->getName());
@@ -140,7 +139,7 @@ class BlockEntityTransformer implements BlockEntityTransformerInterface
                 if ($dataTransformers) {
                     /** @var BlockDataTransformerInterface $dataTransformer */
                     foreach ($dataTransformers as $dataTransformer) {
-                        $value = call_user_func_array($callDataTransformFunc, [$dataTransformer, $value]);
+                        $value = $callDataTransformFunc($dataTransformer, $value);
                     }
 
                     $this->property->setValue($blockEntity, $property->getName(), $value);

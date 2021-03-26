@@ -41,11 +41,11 @@
                         <i class="glyphicon glyphicon-plus-sign"></i>
                     </a>
                     {% for name, prototype in prototypes %}
-                        <a class="btn btn-default btn-lg js-block-collection-action-create" data-block-name="{{ name }}">
+                        <a class="btn btn-default btn-lg js-block-collection-action-create" data-block-type="{{ name }}">
                             <span class="{{ ('block.' ~ name ~ '.icon')|trans }}" aria-hidden="true"></span><br>
                             {{ ('block.' ~ name ~ '.title')|trans }}
                         </a>
-                        <script class="js-block-collection-template" type="text/template" data-block-name="{{ name }}" data-prefix-name="{{ full_name ~ '[' ~ name ~ ']' }}">
+                        <script class="js-block-collection-template" type="text/template" data-block-type="{{ name }}" data-prefix-name="{{ full_name ~ '[' ~ name ~ ']' }}">
                             {{ prototype }}
                         </script>
                     {% endfor %}

@@ -107,10 +107,10 @@ class CollectionTransformer extends AbstractBlockDataTransformer implements Bloc
         foreach($value as $blockData) {
 
             $blockName = '';
-            if (is_array($blockData) && isset($blockData['name'])) {
-                $blockName = $blockData['name'];
-            } else if ($blockData instanceof BlockEntityInterface && !empty($blockData->getName())) {
-                $blockName = $blockData->getName();
+            if (is_array($blockData) && isset($blockData['blockType'])) {
+                $blockName = $blockData['blockType'];
+            } else if ($blockData instanceof BlockEntityInterface && !empty($blockData->getBlockType())) {
+                $blockName = $blockData->getBlockType();
             } else if (is_object($blockData)) {
                 $annotationClass = $this->annotationsFinder->findForClass($blockData, [Type::class]);
                 if ($annotationClass) {

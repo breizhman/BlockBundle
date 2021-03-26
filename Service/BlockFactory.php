@@ -2,6 +2,7 @@
 
 namespace Cms\BlockBundle\Service;
 
+use Cms\BlockBundle\Exception\NotFoundException;
 use Cms\BlockBundle\Model\Entity\BlockEntityInterface;
 use Cms\BlockBundle\Model\Type\BlockTypeInterface;
 use Cms\BlockBundle\Model\Controller\BlockControllerInterface;
@@ -11,6 +12,7 @@ use Symfony\Component\Form\FormInterface;
 
 /**
  * Class BlockFactory
+ *
  * @package Cms\BlockBundle\Service
  */
 class BlockFactory implements BlockFactoryInterface
@@ -31,9 +33,9 @@ class BlockFactory implements BlockFactoryInterface
     private $formFactory;
 
     /**
-     * @param BlockRegistriesInterface $registries
+     * @param BlockRegistriesInterface    $registries
      * @param BlockEntityManagerInterface $entityManager
-     * @param FormFactory $formFactory
+     * @param FormFactory                 $formFactory
      */
     public function __construct(BlockRegistriesInterface $registries, BlockEntityManagerInterface $entityManager, FormFactory $formFactory)
     {
@@ -45,7 +47,7 @@ class BlockFactory implements BlockFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getType(string $name):? BlockTypeInterface
+    public function getType(string $name): ?BlockTypeInterface
     {
         $registry = $this->registries->getRegistry('type');
         if ($registry->has($name)) {
@@ -58,7 +60,7 @@ class BlockFactory implements BlockFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getVoter(string $name):? string
+    public function getVoter(string $name): ?string
     {
         $block = $this->getType($name);
         if ($block) {
@@ -71,7 +73,7 @@ class BlockFactory implements BlockFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getEntity(string $name):? string
+    public function getEntity(string $name): ?string
     {
         $block = $this->getType($name);
         if ($block) {
@@ -84,7 +86,7 @@ class BlockFactory implements BlockFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getController(string $name):? string
+    public function getController(string $name): ?string
     {
         $block = $this->getType($name);
         if ($block) {
@@ -97,7 +99,7 @@ class BlockFactory implements BlockFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function createForm(string $name, BlockEntityInterface $entity, $options):? FormInterface
+    public function createForm(string $name, BlockEntityInterface $entity, $options): ?FormInterface
     {
         $block = $this->getType($name);
         if ($block) {
@@ -110,7 +112,7 @@ class BlockFactory implements BlockFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function createController(string $name):? BlockControllerInterface
+    public function createController(string $name): ?BlockControllerInterface
     {
         $className = $this->getController($name);
         if ($className) {
@@ -126,14 +128,17 @@ class BlockFactory implements BlockFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function createEntity(string $name, array $data = []):? BlockEntityInterface
+    public function loadEntity(string $id): ?BlockEntityInterface
     {
-        $block = $this->getType($name);
-        if ($block) {
-            return $this->entityManager->load($block->getEntity(), $data);
-        }
+        return $this->entityManager->load($id);
+    }
 
-        return null;
+    /**
+     * {@inheritdoc}
+     */
+    public function createEntity(string $name, array $data = []): ?BlockEntityInterface
+    {
+        return $this->entityManager->create($name, $data);
     }
 
     /**

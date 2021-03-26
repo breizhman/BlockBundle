@@ -2,6 +2,7 @@
 
 namespace Cms\BlockBundle\Service;
 
+use Cms\BlockBundle\Exception\NotFoundException;
 use Cms\BlockBundle\Model\Entity\BlockEntityInterface;
 use Cms\BlockBundle\Model\Type\BlockTypeInterface;
 use Cms\BlockBundle\Model\Controller\BlockControllerInterface;
@@ -37,6 +38,17 @@ interface BlockFactoryInterface
      * @return null|string
      */
     public function getController(string $name):? string;
+
+    /**
+     * load and return BlockEntityInterface instance
+     *
+     * @param string $id
+     *
+     * @return BlockEntityInterface|null
+     *
+     * @throws NotFoundException
+     */
+    public function loadEntity(string $id):? BlockEntityInterface;
 
     /**
      * create and return BlockEntityInterface instance
