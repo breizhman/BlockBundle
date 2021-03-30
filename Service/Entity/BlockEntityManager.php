@@ -265,18 +265,21 @@ class BlockEntityManager implements BlockEntityManagerInterface
         foreach ($this->blocksToInsert as $blockEntity) {
             $this->getRepository()->insert($this->toArray($blockEntity));
 
+            $this->clearPrepare($blockEntity);
             $this->register($blockEntity);
         }
 
         foreach ($this->blocksToUpdate as $blockEntity) {
             $this->getRepository()->update($this->toArray($blockEntity));
 
+            $this->clearPrepare($blockEntity);
             $this->register($blockEntity);
         }
 
         foreach ($this->blocksToRemove as $blockEntity) {
             $this->getRepository()->delete($this->toArray($blockEntity));
 
+            $this->clearPrepare($blockEntity);
             $this->register($blockEntity);
         }
 
@@ -288,8 +291,6 @@ class BlockEntityManager implements BlockEntityManagerInterface
      */
     public function register(BlockEntityInterface $blockEntity): void
     {
-        $this->clearPrepare($blockEntity);
-
         $key = $blockEntity->getBlockId() ?? spl_object_hash($blockEntity);
 
         $this->blocksLoaded[$key] = $blockEntity;
@@ -353,16 +354,6 @@ class BlockEntityManager implements BlockEntityManagerInterface
      *
      * @return bool
      */
-    protected function isNew(BlockEntityInterface $blockEntity): bool
-    {
-        return $this->getOriginEntity($blockEntity) === null;
-    }
-
-    /**
-     * @param BlockEntityInterface $blockEntity
-     *
-     * @return bool
-     */
     public function hasChanged(BlockEntityInterface $blockEntity): bool
     {
         try {
@@ -374,6 +365,28 @@ class BlockEntityManager implements BlockEntityManagerInterface
         } catch (\Throwable $t) {
             return false;
         }
+    }
+
+    /**
+     * @param BlockEntityInterface $blockEntity
+     *
+     * @return bool
+     */
+    public function isNew(BlockEntityInterface $blockEntity): bool
+    {
+        return $this->getOriginEntity($blockEntity) === null;
+    }
+
+    /**
+     * @param BlockEntityInterface $blockEntity
+     *
+     * @return bool
+     */
+    public function isLoaded(BlockEntityInterface $blockEntity): bool
+    {
+        $key = $blockEntity->getBlockId() ?? spl_object_hash($blockEntity);
+
+        return isset($this->blocksLoaded[$key]);
     }
 
     /**

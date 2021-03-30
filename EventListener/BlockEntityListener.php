@@ -43,6 +43,10 @@ class BlockEntityListener implements EventSubscriberInterface
      */
     public function onBuildEntity(BlockEntityEvent $event): void
     {
+        if ($this->entityManager->isNew($event->getBlockEntity())) {
+            return;
+        }
+
         $this->entityManager->register($event->getBlockEntity());
     }
 }

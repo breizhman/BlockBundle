@@ -76,6 +76,20 @@ interface BlockEntityManagerInterface
     public function hasChanged(BlockEntityInterface $blockEntity): bool;
 
     /**
+     * @param BlockEntityInterface $blockEntity
+     *
+     * @return bool
+     */
+    public function isNew(BlockEntityInterface $blockEntity): bool;
+
+    /**
+     * @param BlockEntityInterface $blockEntity
+     *
+     * @return bool
+     */
+    public function isLoaded(BlockEntityInterface $blockEntity): bool;
+
+    /**
      * @param object $entity
      *
      * @return bool
