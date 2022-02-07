@@ -4,7 +4,7 @@ namespace Cms\BlockBundle\Service;
 
 use Cms\BlockBundle\Model\Type\BlockTypeInterface;
 use Cms\BlockBundle\Exception\ClassNotFoundException;
-use Doctrine\Common\Inflector\Inflector;
+use Doctrine\Inflector\Inflector;
 
 /**
  * Class ResolvedBlockType
