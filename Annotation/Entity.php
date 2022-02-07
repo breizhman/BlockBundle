@@ -8,6 +8,8 @@ namespace Cms\BlockBundle\Annotation;
  */
 final class Entity implements BlockAnnotationInterface
 {
+    public const DEFAULT_PROPERTY = 'id';
+
     /**
      * entity class name
      *
@@ -20,7 +22,7 @@ final class Entity implements BlockAnnotationInterface
      *
      * @var string[]
      */
-    public $properties = ['id'];
+    public $properties = [ self::DEFAULT_PROPERTY ];
 
     /**
      * @var array

@@ -52,7 +52,12 @@ class BlockCollection implements Collection, Selectable
      */
     public function __clone()
     {
-        $this->collection = clone $this->collection;
+        $newVal = new ArrayCollection();
+        foreach ($this->toArray() as $subVal) {
+            $newVal->add(clone $subVal);
+        }
+
+        $this->collection = $newVal;
     }
 
     /**

@@ -231,7 +231,6 @@ class BlockEntityManager implements BlockEntityManagerInterface
 
         // run action persist or remove on property
         foreach ($propertiesState as $state => $propertiesName) {
-
             if (in_array($state, [BlockEntityProperty::STATE_ADD, BlockEntityProperty::STATE_UPDATE], true)) {
                 $blockEntity = $this->entityTransformer->persist($blockEntity, $propertiesName);
             }
@@ -558,7 +557,7 @@ class BlockEntityManager implements BlockEntityManagerInterface
      */
     protected function generateId(): string
     {
-        return uniqid('', false);
+        return uniqid(date('YmdHms'), false);
     }
 
     /**

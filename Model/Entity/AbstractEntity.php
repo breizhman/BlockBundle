@@ -2,6 +2,10 @@
 
 namespace Cms\BlockBundle\Model\Entity;
 
+use Cms\BlockBundle\Collection\BlockCollection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+
 /**
  * Class AbstractEntity
  *
@@ -9,6 +13,8 @@ namespace Cms\BlockBundle\Model\Entity;
  */
 abstract class AbstractEntity implements BlockEntityInterface
 {
+    use CloneSubObjectsTrait;
+
     /**
      * @var string
      */
@@ -18,19 +24,6 @@ abstract class AbstractEntity implements BlockEntityInterface
      * @var string
      */
     protected $blockType;
-
-    /**
-     * on clone, clone sub objects
-     */
-    public function __clone() {
-        foreach($this as $key => $val) {
-            if (is_object($val)) {
-                $this->{$key} = clone $val;
-            } else if (is_array($val)) {
-                $this->{$key} = unserialize(serialize($val));
-            }
-        }
-    }
 
     /**
      * @return string
@@ -48,6 +41,7 @@ abstract class AbstractEntity implements BlockEntityInterface
     public function setBlockId($id): BlockEntityInterface
     {
         $this->blockId = $id;
+
         return $this;
     }
 
@@ -67,6 +61,7 @@ abstract class AbstractEntity implements BlockEntityInterface
     public function setBlockType($type): BlockEntityInterface
     {
         $this->blockType = $type;
+
         return $this;
     }
 }

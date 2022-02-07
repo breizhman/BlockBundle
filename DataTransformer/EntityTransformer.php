@@ -2,14 +2,11 @@
 
 namespace Cms\BlockBundle\DataTransformer;
 
-use App\Entity\AdvertLocation;
 use Cms\BlockBundle\Annotation\Entity;
-use Cms\BlockBundle\Model\Entity\BlockEntity;
 use Cms\BlockBundle\Model\Entity\BlockEntityInterface;
 use Cms\BlockBundle\Service\Entity\BlockEntityManagerInterface;
-use Doctrine\Common\Inflector\Inflector;
+use Doctrine\Inflector\Inflector;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\UnitOfWork;
 
 /**
  * Class EntityTransformer
@@ -148,7 +145,7 @@ class EntityTransformer extends AbstractBlockDataTransformer
      */
     public function getProperties(): array
     {
-        return $this->annotation->properties ?? ['id'];
+        return $this->annotation->properties ?? [ Entity::DEFAULT_PROPERTY ];
     }
 
     /**
@@ -162,7 +159,7 @@ class EntityTransformer extends AbstractBlockDataTransformer
         if (!is_object($valueOrObject)) {
 
             if (!is_array($valueOrObject)) {
-                $valueOrObject = [$valueOrObject];
+                $valueOrObject = [Entity::DEFAULT_PROPERTY => $valueOrObject];
             }
 
             foreach ($this->getProperties() as $property) {
