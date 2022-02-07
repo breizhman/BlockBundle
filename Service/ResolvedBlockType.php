@@ -5,6 +5,7 @@ namespace Cms\BlockBundle\Service;
 use Cms\BlockBundle\Model\Type\BlockTypeInterface;
 use Cms\BlockBundle\Exception\ClassNotFoundException;
 use Doctrine\Inflector\Inflector;
+use Doctrine\Inflector\InflectorFactory;
 
 /**
  * Class ResolvedBlockType
@@ -18,12 +19,19 @@ class ResolvedBlockType implements BlockTypeInterface, ResolvedBlockTypeInterfac
     private $innerType;
 
     /**
+     * @var Inflector
+     */
+    private $inflector;
+
+    /**
      * ResolvedBlockType constructor.
      * @param BlockTypeInterface $blockType
      */
     public function __construct(BlockTypeInterface $blockType)
     {
         $this->innerType = $blockType;
+
+        $this->inflector = InflectorFactory::create()->build();
     }
 
     /**
@@ -127,7 +135,7 @@ class ResolvedBlockType implements BlockTypeInterface, ResolvedBlockTypeInterfac
     protected function constructNamespace(string $template, bool $doubleSlash = true):? string
     {
         $baseName = $this->findParentNamespace(get_class($this->getInnerType()), $doubleSlash, 1);
-        $className = str_replace(['{base}', '{name}'], [$baseName,  Inflector::classify($this->getName())], $template);
+        $className = str_replace(['{base}', '{name}'], [$baseName,  $this->inflector->classify($this->getName())], $template);
 
         return $className;
     }

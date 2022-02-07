@@ -6,6 +6,7 @@ use Cms\BlockBundle\Annotation\Entity;
 use Cms\BlockBundle\Model\Entity\BlockEntityInterface;
 use Cms\BlockBundle\Service\Entity\BlockEntityManagerInterface;
 use Doctrine\Inflector\Inflector;
+use Doctrine\Inflector\InflectorFactory;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -22,6 +23,11 @@ class EntityTransformer extends AbstractBlockDataTransformer
     private $blockEntityManager;
 
     /**
+     * @var Inflector
+     */
+    private $inflector;
+
+    /**
      * EntityTransformer constructor.
      *
      * @param BlockEntityManagerInterface $blockEntityManager
@@ -29,6 +35,7 @@ class EntityTransformer extends AbstractBlockDataTransformer
     public function __construct(BlockEntityManagerInterface $blockEntityManager)
     {
         $this->blockEntityManager = $blockEntityManager;
+        $this->inflector = InflectorFactory::create()->build();
     }
 
     /**
@@ -179,7 +186,7 @@ class EntityTransformer extends AbstractBlockDataTransformer
         }
 
         foreach ($this->getProperties() as $property) {
-            $methodSuffix = Inflector::classify($property);
+            $methodSuffix = $this->inflector->classify($property);
             $methodName = sprintf('get%s', $methodSuffix);
             if (!method_exists($valueOrObject, $methodName)) {
                 $methodName = sprintf('is%s', $methodSuffix);
