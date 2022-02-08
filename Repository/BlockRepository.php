@@ -2,6 +2,8 @@
 
 namespace Cms\BlockBundle\Repository;
 
+use Doctrine\DBAL\Driver\Exception as DriverException;
+use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\ORM\EntityRepository;
 
@@ -16,6 +18,8 @@ class BlockRepository extends EntityRepository
      * @param string $id
      *
      * @return array
+     * @throws DBALException
+     * @throws DriverException
      */
     public function findDataById(string $id): array
     {
@@ -28,7 +32,7 @@ class BlockRepository extends EntityRepository
             ->where('id = :id')
             ->setParameter('id', $id)
             ->execute()
-            ->fetchColumn(0);
+            ->fetchOne();
 
         $data = json_decode($result, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
