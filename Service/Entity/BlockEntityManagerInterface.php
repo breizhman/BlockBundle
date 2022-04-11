@@ -13,10 +13,11 @@ interface BlockEntityManagerInterface
      *
      * @param string $nameOrClass
      * @param array  $data
+     * @param null|BlockEntityInterface  $parentBlock
      *
      * @return BlockEntityInterface|null
      */
-    public function create(string $nameOrClass, array $data = []): ?BlockEntityInterface;
+    public function create(string $nameOrClass, array $data = [], BlockEntityInterface $parentBlock = null): ?BlockEntityInterface;
 
     /**
      * load block entity by ID and name
@@ -47,10 +48,11 @@ interface BlockEntityManagerInterface
      * persist block entity data
      *
      * @param BlockEntityInterface $blockEntity
+     * @param null|BlockEntityInterface $parentBlockEntity
      *
      * @return BlockEntityManagerInterface
      */
-    public function persist(BlockEntityInterface $blockEntity): BlockEntityManagerInterface;
+    public function persist(BlockEntityInterface $blockEntity, BlockEntityInterface $parentBlockEntity = null): BlockEntityManagerInterface;
 
     /**
      * remove block entity data
@@ -81,6 +83,13 @@ interface BlockEntityManagerInterface
      * @return bool
      */
     public function isNew(BlockEntityInterface $blockEntity): bool;
+
+    /**
+     * @param BlockEntityInterface $blockEntity
+     *
+     * @return bool
+     */
+    public function isLoading(BlockEntityInterface $blockEntity): bool;
 
     /**
      * @param BlockEntityInterface $blockEntity

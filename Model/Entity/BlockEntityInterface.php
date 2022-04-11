@@ -26,6 +26,22 @@ interface BlockEntityInterface
     public function setBlockId($id): BlockEntityInterface;
 
     /**
+     * get id of the block parent
+     *
+     * @return null|string
+     */
+    public function getParentBlockId(): ?string;
+
+    /**
+     * set id of the block parent
+     *
+     * @param string|null $id
+     *
+     * @return BlockEntityInterface
+     */
+    public function setParentBlockId(string $id = null): BlockEntityInterface;
+
+    /**
      * get type of the block
      *
      * @return string

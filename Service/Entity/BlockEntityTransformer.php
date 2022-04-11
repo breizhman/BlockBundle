@@ -134,7 +134,7 @@ class BlockEntityTransformer implements BlockEntityTransformerInterface
             if (empty($filterProperties) || in_array($property->getName(), $filterProperties)) {
 
                 $value = $this->property->getValue($blockEntity, $property->getName());
-                $dataTransformers = $this->dataTransformersFinder->findForOneProperty($property);
+                $dataTransformers = $this->dataTransformersFinder->findForOneProperty($blockEntity, $property);
 
                 if ($dataTransformers) {
                     /** @var BlockDataTransformerInterface $dataTransformer */

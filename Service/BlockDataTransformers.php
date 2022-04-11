@@ -5,6 +5,7 @@ namespace Cms\BlockBundle\Service;
 use Cms\BlockBundle\Annotation\BlockAnnotationInterface;
 use Cms\BlockBundle\DataTransformer\BlockDataTransformerInterface;
 use Cms\BlockBundle\Exception\NotFoundException;
+use Cms\BlockBundle\Model\Entity\BlockEntityInterface;
 
 /**
  * Class BlockDataTransformers
@@ -31,10 +32,12 @@ class BlockDataTransformers implements BlockDataTransformersInterface
     /**
      * {@inheritdoc}
      */
-    public function getDataTransformersByAnnotation(BlockAnnotationInterface $annotation, array $targets = []): array
+    public function getDataTransformersByAnnotation(BlockAnnotationInterface $annotation, array $targets = [], object $parentObject = null): array
     {
         $dataTransformers = [];
         $annotationClass = get_class($annotation);
+
+        /** @var BlockDataTransformerInterface $dataTransformer */
         foreach ($this->dataTransformers as $name => $dataTransformer) {
             if (!$dataTransformer instanceof BlockDataTransformerInterface) {
                 continue;
@@ -47,6 +50,11 @@ class BlockDataTransformers implements BlockDataTransformersInterface
                 && empty(array_intersect($dataTransformer->getAnnotationTargets(), $targets))
             ) {
                 continue;
+            }
+
+            // pass parent block to transformer
+            if ($parentObject instanceof BlockEntityInterface) {
+                $dataTransformer->setParentBlockEntity($parentObject);
             }
 
             $dataTransformer->setAnnotation($annotation);

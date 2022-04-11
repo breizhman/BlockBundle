@@ -41,7 +41,7 @@ class TypeTransformer extends AbstractBlockDataTransformer implements BlockDataT
             return $value;
         }
 
-        return $this->blockFactory->createEntity($this->annotation->name, (array) $value);
+        return $this->blockFactory->createEntity($this->annotation->name, (array) $value, $this->parentBlockEntity);
     }
 
     /**
@@ -62,7 +62,7 @@ class TypeTransformer extends AbstractBlockDataTransformer implements BlockDataT
     public function persist($value)
     {
         if (is_object($value) && $value instanceof BlockEntityInterface) {
-            $this->blockFactory->getEntityManager()->persist($value);
+            $this->blockFactory->getEntityManager()->persist($value, $this->parentBlockEntity);
         }
 
         return $value;

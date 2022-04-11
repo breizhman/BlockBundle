@@ -31,7 +31,7 @@ class DataTransformersFinder implements DataTransformersFinderInterface
     /**
      * @inheritdoc
      */
-    public function findForClass(object $object, array $filterAnnotations = []): array
+    public function findForClass(object $object, array $filterAnnotations = [], object $parentObject = null): array
     {
         $dataTransformers = [];
         $annotations = $this->annotationsFinder->findForClass($object, $filterAnnotations);
@@ -39,7 +39,7 @@ class DataTransformersFinder implements DataTransformersFinderInterface
         foreach ($annotations as $annotation) {
             $dataTransformers = array_merge(
                 $dataTransformers,
-                $this->dataTransformers->getDataTransformersByAnnotation($annotation, [Target::TARGET_CLASS])
+                $this->dataTransformers->getDataTransformersByAnnotation($annotation, [Target::TARGET_CLASS], $parentObject)
             );
         }
 
@@ -49,7 +49,7 @@ class DataTransformersFinder implements DataTransformersFinderInterface
     /**
      * @inheritdoc
      */
-    public function findForOneProperty(\ReflectionProperty $property, array $filterAnnotations = []): array
+    public function findForOneProperty(object $object, \ReflectionProperty $property, array $filterAnnotations = []): array
     {
         $dataTransformers = [];
         $annotations = $this->annotationsFinder->findForOneProperty($property, $filterAnnotations);
@@ -57,7 +57,7 @@ class DataTransformersFinder implements DataTransformersFinderInterface
         foreach ($annotations as $annotation) {
             $dataTransformers = array_merge(
                 $dataTransformers,
-                $this->dataTransformers->getDataTransformersByAnnotation($annotation, [Target::TARGET_PROPERTY])
+                $this->dataTransformers->getDataTransformersByAnnotation($annotation, [Target::TARGET_PROPERTY], $object)
             );
         }
 

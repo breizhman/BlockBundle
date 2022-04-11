@@ -21,5 +21,5 @@ interface DataTransformersFinderInterface
      * @param array $filterAnnotations
      * @return array
      */
-    public function findForOneProperty(\ReflectionProperty $property, array $filterAnnotations = []): array;
+    public function findForOneProperty(object $object, \ReflectionProperty $property, array $filterAnnotations = []): array;
 }

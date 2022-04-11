@@ -3,6 +3,7 @@
 namespace Cms\BlockBundle\DataTransformer;
 
 use Cms\BlockBundle\Annotation\BlockAnnotationInterface;
+use Cms\BlockBundle\Model\Entity\BlockEntityInterface;
 
 abstract class AbstractBlockDataTransformer implements BlockDataTransformerInterface
 {
@@ -10,6 +11,11 @@ abstract class AbstractBlockDataTransformer implements BlockDataTransformerInter
      * @var BlockAnnotationInterface
      */
     protected $annotation;
+
+    /**
+     * @var BlockEntityInterface
+     */
+    protected $parentBlockEntity = null;
 
     /**
      * @inheritdoc
@@ -66,5 +72,15 @@ abstract class AbstractBlockDataTransformer implements BlockDataTransformerInter
     public function getAnnotationTargets(): array
     {
         return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setParentBlockEntity(?BlockEntityInterface $parentBlockEntity): BlockDataTransformerInterface
+    {
+        $this->parentBlockEntity = $parentBlockEntity;
+
+        return $this;
     }
 }

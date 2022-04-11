@@ -64,6 +64,7 @@ class EntityTransformer extends AbstractBlockDataTransformer
 
         if ($value instanceof BlockEntityInterface) {
             $newValue->setBlockId($value->getBlockId());
+            $newValue->setParentBlockId($value->getParentBlockId());
             $newValue->setBlockType($value->getBlockType());
         }
 
@@ -88,6 +89,7 @@ class EntityTransformer extends AbstractBlockDataTransformer
         /** @var BlockEntityInterface $blockEntity */
         $blockEntity = new $class;
         $blockEntity->setBlockId($value->getBlockId());
+        $blockEntity->setParentBlockId($value->getParentBlockId());
         $blockEntity->setBlockType($value->getBlockType());
 
         foreach ($this->getPropertiesWithValue($value) as $property => $propertyValue) {

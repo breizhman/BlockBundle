@@ -20,9 +20,11 @@ interface BlockDataTransformersInterface
      *
      * @param BlockAnnotationInterface $annotation
      * @param array $targets
+     * @param null|object $parentObject
+     *
      * @return array
      */
-    public function getDataTransformersByAnnotation(BlockAnnotationInterface $annotation, array $targets = []): array;
+    public function getDataTransformersByAnnotation(BlockAnnotationInterface $annotation, array $targets = [], object $parentObject = null): array;
 
     /**
      * @param string $alias

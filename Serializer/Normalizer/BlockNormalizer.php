@@ -99,10 +99,17 @@ class BlockNormalizer implements NormalizerInterface, DenormalizerInterface, Ser
      */
     public function denormalize($data, $class, $format = null, array $context = [])
     {
-        $object = $this->objectNormalizer->denormalize($data, $class, $format, $context);
+        $parentBlockId = $context['parent_block_id'] ?? null;
+        $object = $this->objectNormalizer->denormalize($data, $class, $format, $context + [
+            'parent_block_id' =>  $context['blockId'] ?? null,
+        ]);
 
         if (!$object instanceof BlockEntityInterface) {
             return $object;
+        }
+
+        if ($parentBlockId && $parentBlockId !== $object->getBlockId()) {
+            $object->setParentBlockId($parentBlockId);
         }
 
         $this->eventDispatcher->dispatch( new BlockEntityEvent($object), BlockEntityEvent::BUILD);

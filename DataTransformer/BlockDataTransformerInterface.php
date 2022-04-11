@@ -3,6 +3,7 @@
 namespace Cms\BlockBundle\DataTransformer;
 
 use Cms\BlockBundle\Annotation\BlockAnnotationInterface;
+use Cms\BlockBundle\Model\Entity\BlockEntityInterface;
 
 interface BlockDataTransformerInterface
 {
@@ -56,4 +57,10 @@ interface BlockDataTransformerInterface
      * @return BlockDataTransformerInterface
      */
     public function setAnnotation(BlockAnnotationInterface $annotation): BlockDataTransformerInterface;
+
+    /**
+     * @param null|BlockEntityInterface $parentBlockEntity
+     * @return BlockDataTransformerInterface
+     */
+    public function setParentBlockEntity(?BlockEntityInterface $parentBlockEntity): BlockDataTransformerInterface;
 }

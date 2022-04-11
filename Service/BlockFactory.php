@@ -136,9 +136,9 @@ class BlockFactory implements BlockFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function createEntity(string $name, array $data = []): ?BlockEntityInterface
+    public function createEntity(string $name, array $data = [], BlockEntityInterface $parentBlockEntity = null): ?BlockEntityInterface
     {
-        return $this->entityManager->create($name, $data);
+        return $this->entityManager->create($name, $data, $parentBlockEntity);
     }
 
     /**

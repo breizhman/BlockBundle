@@ -21,6 +21,11 @@ abstract class AbstractEntity implements BlockEntityInterface
     protected $blockId;
 
     /**
+     * @var null|string
+     */
+    protected $parentBlockId = null;
+
+    /**
      * @var string
      */
     protected $blockType;
@@ -42,6 +47,25 @@ abstract class AbstractEntity implements BlockEntityInterface
     {
         $this->blockId = $id;
 
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getParentBlockId(): ?string
+    {
+        return $this->parentBlockId;
+    }
+
+    /**
+     * @param string|null  $id
+     *
+     * @return BlockEntityInterface
+     */
+    public function setParentBlockId($id = null): BlockEntityInterface
+    {
+        $this->parentBlockId = $id;
         return $this;
     }
 

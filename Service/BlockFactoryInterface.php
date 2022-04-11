@@ -55,10 +55,11 @@ interface BlockFactoryInterface
      *
      * @param string $name
      * @param array $data
+     * @param null|BlockEntityInterface $parentBlockEntity
      *
      * @return BlockEntityInterface|null
      */
-    public function createEntity(string $name, array $data = []):? BlockEntityInterface;
+    public function createEntity(string $name, array $data = [], BlockEntityInterface $parentBlockEntity = null):? BlockEntityInterface;
 
     /**
      * create and return array
