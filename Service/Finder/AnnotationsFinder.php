@@ -23,7 +23,7 @@ class AnnotationsFinder implements AnnotationsFinderInterface
             ];
         }
 
-        return null;
+        return [];
     }
 
     /**
