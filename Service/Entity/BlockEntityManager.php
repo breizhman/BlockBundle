@@ -190,7 +190,7 @@ class BlockEntityManager implements BlockEntityManagerInterface
 
         $blockEntity = $this->serializer->deserialize($data, $blockEntityClass, ArrayEncoder::FORMAT, [
             ObjectNormalizer::DISABLE_TYPE_ENFORCEMENT => true,
-            'parent_block_id' => $data['blockId'] ?? null,
+            'parent_block_id' => $parentBlockId,
         ]);
 
         if (!$blockEntity instanceof BlockEntityInterface) {

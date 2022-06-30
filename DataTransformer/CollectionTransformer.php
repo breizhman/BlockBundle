@@ -133,6 +133,7 @@ class CollectionTransformer extends AbstractBlockDataTransformer implements Bloc
 
             $returnValues[] = $this->typeTransformer
                 ->setAnnotation($annotationType)
+                ->setParentBlockEntity($this->parentBlockEntity)
                 ->{$callbackFunc}($blockData)
             ;
         }
