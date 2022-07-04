@@ -135,13 +135,9 @@ class BlockEntityManager implements BlockEntityManagerInterface
             throw new NotFoundException(sprintf('Block with ID %s not found', $id));
         }
 
-        $this->blocksIsLoading[$id] = $data;
+        $this->flagAsLoading($id);
 
-        $blockEntity = $this->createByNameAndData($data['blockType'], $data);
-
-        unset($this->blocksIsLoading[$id]);
-
-        return $blockEntity;
+        return $this->createByNameAndData($data['blockType'], $data);
     }
 
     /**
@@ -167,6 +163,10 @@ class BlockEntityManager implements BlockEntityManagerInterface
 
         if ($parentBlockEntity) {
             $blockEntity->setParentBlockId($parentBlockEntity->getBlockId());
+
+            if ($this->isLoading($parentBlockEntity)) {
+                $this->flagAsLoading($blockEntity);
+            }
         }
     }
 
@@ -222,6 +222,8 @@ class BlockEntityManager implements BlockEntityManagerInterface
     public function persist(BlockEntityInterface $blockEntity, BlockEntityInterface $parentBlockEntity = null): BlockEntityManagerInterface
     {
         $this->initEntity($blockEntity, $parentBlockEntity);
+
+        $blockEntity = $this->entityTransformer->transform($blockEntity);
 
         $this->prepareForPersist($blockEntity);
 
@@ -303,6 +305,7 @@ class BlockEntityManager implements BlockEntityManagerInterface
     {
         $key = $blockEntity->getBlockId() ?? spl_object_hash($blockEntity);
 
+        unset($this->blocksIsLoading[$key]);
         $this->blocksLoaded[$key] = $blockEntity;
         $this->blocksOriginal[$key] = clone $blockEntity;
     }
@@ -392,31 +395,57 @@ class BlockEntityManager implements BlockEntityManagerInterface
     }
 
     /**
-     * @param BlockEntityInterface $blockEntity
+     * @param BlockEntityInterface|string $blockEntity block entity or block id
      *
-     * @return bool
+     * @return void
      */
-    public function isLoading(BlockEntityInterface $blockEntity): bool
+    public function flagAsLoading($blockEntity): void
     {
-        $key = $blockEntity->getBlockId() ?? spl_object_hash($blockEntity);
-        return isset($this->blocksIsLoading[$key])
-            || (
-                $blockEntity->getParentBlockId()
-                &&
-                isset($this->blocksIsLoading[$blockEntity->getParentBlockId()])
-            );
+        if (is_string($blockEntity)) {
+            $this->blocksIsLoading[$blockEntity] = $blockEntity;
+        }
+
+        if (!$blockEntity instanceof BlockEntityInterface) {
+            return;
+        }
+
+        $this->blocksIsLoading[$blockEntity->getBlockId() ?? spl_object_hash($blockEntity)] = $blockEntity;
     }
 
     /**
-     * @param BlockEntityInterface $blockEntity
+     * @param BlockEntityInterface|string $blockEntity block entity or block id
      *
      * @return bool
      */
-    public function isLoaded(BlockEntityInterface $blockEntity): bool
+    public function isLoading($blockEntity): bool
     {
-        $key = $blockEntity->getBlockId() ?? spl_object_hash($blockEntity);
+        if (is_string($blockEntity)) {
+            return isset($this->blocksIsLoading[$blockEntity]);
+        }
 
-        return isset($this->blocksLoaded[$key]);
+        if (!$blockEntity instanceof BlockEntityInterface) {
+            return false;
+        }
+
+        return isset($this->blocksIsLoading[$blockEntity->getBlockId() ?? spl_object_hash($blockEntity)]);
+    }
+
+    /**
+     * @param BlockEntityInterface|string $blockEntity block entity or block id
+     *
+     * @return bool
+     */
+    public function isLoaded($blockEntity): bool
+    {
+        if (is_string($blockEntity)) {
+            return isset($this->blocksLoaded[$blockEntity]);
+        }
+
+        if (!$blockEntity instanceof BlockEntityInterface) {
+            return false;
+        }
+
+        return isset($this->blocksLoaded[$blockEntity->getBlockId() ?? spl_object_hash($blockEntity)]);
     }
 
     /**

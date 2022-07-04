@@ -2,7 +2,8 @@
 
 namespace Cms\BlockBundle\EventListener;
 
-use Cms\BlockBundle\Event\BlockEntityEvent;
+use Cms\BlockBundle\Event\PostBuildBlockEvent;
+use Cms\BlockBundle\Event\PreBuildBlockEvent;
 use Cms\BlockBundle\Service\Entity\BlockEntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -34,14 +35,32 @@ class BlockEntityListener implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            BlockEntityEvent::BUILD => 'onBuildEntity',
+            PreBuildBlockEvent::PRE_BUILD  => 'onPreBuildEntity',
+            PostBuildBlockEvent::POST_BUILD => 'onPostBuildEntity',
         ];
     }
 
     /**
-     * @param BlockEntityEvent $event
+     * @param PostBuildBlockEvent $event
      */
-    public function onBuildEntity(BlockEntityEvent $event): void
+    public function onPreBuildEntity(PreBuildBlockEvent $event): void
+    {
+        $blockId = $event->getBlockData()['blockId'] ?? null;
+        $parentBlockId = $event->getBlockData()['parentBlockId'] ?? null;
+
+        if (!($blockId && $parentBlockId)) {
+            return;
+        }
+
+        if ($this->entityManager->isLoading($parentBlockId)) {
+            $this->entityManager->flagAsLoading($blockId);
+        }
+    }
+
+    /**
+     * @param PostBuildBlockEvent $event
+     */
+    public function onPostBuildEntity(PostBuildBlockEvent $event): void
     {
         if ($this->entityManager->isNew($event->getBlockEntity())) {
             return;

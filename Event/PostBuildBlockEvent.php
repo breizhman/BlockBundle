@@ -6,13 +6,13 @@ use Cms\BlockBundle\Model\Entity\BlockEntityInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
- * Class BlockEntityEvent
+ * Class PostBuildBlockEvent
  *
  * @package Cms\BlockBundle\Event
  */
-class BlockEntityEvent extends Event
+class PostBuildBlockEvent extends Event
 {
-    public const BUILD = 'block_entity.build';
+    public const POST_BUILD = 'block_entity.build.post';
 
     /**
      * @var BlockEntityInterface
@@ -20,7 +20,7 @@ class BlockEntityEvent extends Event
     protected $blockEntity;
 
     /**
-     * BlockEntityBuildEvent constructor.
+     * PostBuildBlockEvent constructor.
      *
      * @param BlockEntityInterface $blockEntity
      */

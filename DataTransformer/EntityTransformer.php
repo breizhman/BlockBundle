@@ -48,6 +48,14 @@ class EntityTransformer extends AbstractBlockDataTransformer
             return $value;
         }
 
+        if ($value === null) {
+            if (!(new \ReflectionClass($class))->isAbstract()) {
+                return new $class;
+            }
+
+            return null;
+        }
+
         $propertiesValue = $this->getPropertiesWithValue($value);
         if (!$propertiesValue) {
             return null;

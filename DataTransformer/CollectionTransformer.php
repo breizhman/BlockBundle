@@ -50,7 +50,7 @@ class CollectionTransformer extends AbstractBlockDataTransformer implements Bloc
     public function transform($value)
     {
         if (!(is_array($value) || $value instanceof \Doctrine\Common\Collections\Collection)) {
-            return null;
+            return [];
         }
 
         $value = $this->callTypeAnnotationFunc($value, 'transform');
@@ -64,7 +64,7 @@ class CollectionTransformer extends AbstractBlockDataTransformer implements Bloc
     public function reverseTransform($value)
     {
         if (!(is_array($value) || $value instanceof \Doctrine\Common\Collections\Collection)) {
-            return null;
+            return [];
         }
 
         return $this->callTypeAnnotationFunc($value, 'reverseTransform');

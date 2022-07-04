@@ -85,18 +85,25 @@ interface BlockEntityManagerInterface
     public function isNew(BlockEntityInterface $blockEntity): bool;
 
     /**
-     * @param BlockEntityInterface $blockEntity
+     * @param BlockEntityInterface|string $blockEntity block entity or block id
      *
-     * @return bool
+     * @return void
      */
-    public function isLoading(BlockEntityInterface $blockEntity): bool;
+    public function flagAsLoading($blockEntity): void;
 
     /**
-     * @param BlockEntityInterface $blockEntity
+     * @param BlockEntityInterface|string $blockEntity block entity or block id
      *
      * @return bool
      */
-    public function isLoaded(BlockEntityInterface $blockEntity): bool;
+    public function isLoading($blockEntity): bool;
+
+    /**
+     * @param BlockEntityInterface|string $blockEntity block entity or block id
+     *
+     * @return bool
+     */
+    public function isLoaded($blockEntity): bool;
 
     /**
      * @param object $entity

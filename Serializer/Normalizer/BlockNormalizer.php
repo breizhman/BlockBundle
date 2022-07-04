@@ -2,7 +2,8 @@
 
 namespace Cms\BlockBundle\Serializer\Normalizer;
 
-use Cms\BlockBundle\Event\BlockEntityEvent;
+use Cms\BlockBundle\Event\PostBuildBlockEvent;
+use Cms\BlockBundle\Event\PreBuildBlockEvent;
 use Cms\BlockBundle\Model\Entity\BlockEntityInterface;
 use Cms\BlockBundle\Service\Entity\BlockEntityTransformerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -102,19 +103,21 @@ class BlockNormalizer implements NormalizerInterface, DenormalizerInterface, Ser
         $parentBlockId = $context['parent_block_id'] ?? null;
         unset($context['parent_block_id']);
 
+        if ($parentBlockId && !isset($data['parentBlockId'])) {
+            $data['parentBlockId'] = $parentBlockId;
+        }
+
+        $this->eventDispatcher->dispatch( new PreBuildBlockEvent($data), PreBuildBlockEvent::PRE_BUILD);
+
         $object = $this->objectNormalizer->denormalize($data, $class, $format, $context);
 
         if (!$object instanceof BlockEntityInterface) {
             return $object;
         }
 
-        if ($parentBlockId && $parentBlockId !== $object->getBlockId()) {
-            $object->setParentBlockId($parentBlockId);
-        }
-
         $object = $this->entityTransformer->transform($object);
 
-        $this->eventDispatcher->dispatch( new BlockEntityEvent($object), BlockEntityEvent::BUILD);
+        $this->eventDispatcher->dispatch( new PostBuildBlockEvent($object), PostBuildBlockEvent::POST_BUILD);
 
         return $object;
     }

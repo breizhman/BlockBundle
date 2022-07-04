@@ -80,6 +80,12 @@ class BlockEntityProperty implements BlockEntityPropertyInterface
      */
     public function getValue($objectOrArray, string $propertyPath)
     {
+        if (is_object($objectOrArray)) {
+            $reflectionProperty = new \ReflectionProperty($objectOrArray, $propertyPath);
+            $reflectionProperty->setAccessible(true);
+            return $reflectionProperty->getValue($objectOrArray);
+        }
+
         return $this->propertyAccessor->getValue($objectOrArray, $propertyPath);
     }
 }
