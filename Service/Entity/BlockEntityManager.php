@@ -223,8 +223,6 @@ class BlockEntityManager implements BlockEntityManagerInterface
     {
         $this->initEntity($blockEntity, $parentBlockEntity);
 
-        $blockEntity = $this->entityTransformer->transform($blockEntity);
-
         $this->prepareForPersist($blockEntity);
 
         // case entity is doctrine entity : persist direct
